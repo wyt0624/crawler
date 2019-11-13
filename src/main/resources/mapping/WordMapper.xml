@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surfilter.dao.WordMapper">
+    <insert id="insertWord">
+        insert into word
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wordList != null">
+                word,
+            </if>
+            <if test="wordType != null">
+                word_type,
+            </if>
+        </trim>
+        values
+            <if test="wordList != null">
+                <foreach collection="wordList" item="item" index="index"  separator=",">
+                    (#{item},#{wordType})
+                </foreach>
+            </if>
+    </insert>
+</mapper>
