@@ -6,12 +6,14 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class domain {
     public static void main(String[] args) throws IOException {
         List<Keyword> keywords = new ArrayList<Keyword>();
-        List<Keyword> result = new ArrayList<Keyword>();
+        Set<Keyword> result = new HashSet<Keyword>();
         Keyword a1= new Keyword();
         a1.setWord("手机");
         keywords.add(a1);

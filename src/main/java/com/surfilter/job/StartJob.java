@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 @Component
 public class StartJob {
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(1000);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(50);
 
     public void connectIpServer(Set<String> urlList){
         //遍历每个程序

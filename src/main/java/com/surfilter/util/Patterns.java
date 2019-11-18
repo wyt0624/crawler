@@ -58,8 +58,8 @@ public class Patterns {
         current.addKeyword(keyword);
 
     }
-    public List<Keyword> searchKeyword(String data,Integer category) {
-        List<Keyword> matchResult = new ArrayList<Keyword>();
+    public Set<Keyword> searchKeyword(String data,Integer category) {
+        Set<Keyword> matchResult = new HashSet<>();
         Node node = root;
         char[] chs = data.toCharArray();
         for (int i=0;i<chs.length;i++){

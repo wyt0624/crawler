@@ -11,7 +11,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -30,7 +32,7 @@ public class FileReadImpl implements FileRead {
     public void doMainToRedis(String path) {
         File file=new File(path);
         File[] files = file.listFiles();
-        List<String> domainList=new ArrayList<>();
+        Set<String> domainList=new HashSet<>();
         try {
             for(File tempFile:files){
                 if(tempFile.getName().contains("bak")){continue;}

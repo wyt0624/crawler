@@ -9,11 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Set;
 
 
 public class GsonUtil {
-    public static String getJsonStringByObject(List<String> domainList) {
-        return new Gson().toJson(domainList);
+    public static String getJsonStringByObject(Set<String> domainSet) {
+        return new Gson().toJson(domainSet);
 
     }
 }

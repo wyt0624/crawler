@@ -9,6 +9,11 @@ public enum Param implements CommonParam{
 
     HTTP_PORT(80,"http"),
     HTTPS_PORT(443,"https"),
+
+    VPN_WORD(1,"VPN词语"),
+    YELLOW_WORD(2,"涉黄词语"),
+    WADING_WORD(3,"涉赌词语"),
+    WHITE_WORD(4,"白名单词语"),
     ;
 
     private Param(int code,String msg){

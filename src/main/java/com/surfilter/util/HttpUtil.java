@@ -1,11 +1,17 @@
 package com.surfilter.util;
 
+import com.surfilter.enums.Param;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.*;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpUtil {
 
@@ -30,6 +36,12 @@ public class HttpUtil {
         }
     }
 
+    /**
+     *
+     * @param hostName
+     * @param port
+     * @return
+     */
     public static boolean isSocketAliveUitlitybyCrunchify(String hostName, int port) {
         boolean isAlive = false;
 
@@ -61,7 +73,9 @@ public class HttpUtil {
     }
 
 
-
+    /**
+     *
+     */
     public static void trustEveryone() {
         try {
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
@@ -86,6 +100,43 @@ public class HttpUtil {
         } catch (Exception e) {
             // e.printStackTrace();
         }
+    }
+
+
+    /**
+     * 爬取url
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static Document getDocByUrl(String url) throws IOException {
+        Map<String, String> header = new HashMap<>();
+        header.put("User-Agent", "  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0");
+        header.put("Accept", "  text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        header.put("Accept-Language", "zh-cn,zh;q=0.5");
+        header.put("Accept-Encoding", "gzip, deflate, sdch");
+        header.put("Connection", "keep-alive");
+        Document doc = Jsoup.connect(url)
+                .headers(header)
+                .ignoreContentType(true)
+                .timeout(5000).get();
+        return doc;
+    }
+
+    public static String getNewUrl(String url) {
+        String newUrl = null;
+        if (!url.contains(Param.HTTP_PORT.getMsg()) && !url.contains(Param.HTTPS_PORT.getMsg())) {
+            if (HttpUtil.isSocketAliveUitlitybyCrunchify(url,Param.HTTPS_PORT.getCode())) {
+                newUrl = Param.HTTPS_PORT.getMsg() + "://" + url;
+            } else if (HttpUtil.isSocketAliveUitlitybyCrunchify(url,Param.HTTP_PORT.getCode())) {
+                newUrl = Param.HTTP_PORT.getMsg() + "://" + url;
+            }  else {
+                newUrl = url;
+            }
+        } else {
+            newUrl = url;
+        }
+        return newUrl;
     }
 
 }

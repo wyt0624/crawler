@@ -61,7 +61,7 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 10000)
     public void startCrawler() {
         if (readRedis.readRedis(Param.REDIS_URL.getMsg())) {
-            String ips = redisTemplate.opsForList().rightPop(Param.REDIS_URL.getMsg(), 1L, TimeUnit.SECONDS);
+            String ips = redisTemplate.opsForList().leftPop(Param.REDIS_URL.getMsg(), 1L, TimeUnit.SECONDS);
             Set<String> urlSet = new Gson().fromJson(ips, new TypeToken<Set<String>>() {
             }.getType());
             startJob.connectIpServer(urlSet);

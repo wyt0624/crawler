@@ -85,31 +85,10 @@ public class RedisReadImpl implements RedisRead {
     public Set<WordDO> getWebMessageText(String url) {
         HttpUtil.trustEveryone();
         Set<WordDO> set = new HashSet<>();
-        String newUrl = null;
         try {
-            //判断端口
-            if (!url.contains(Param.HTTP_PORT.getMsg()) && !url.contains(Param.HTTPS_PORT.getMsg())) {
-                if (HttpUtil.isSocketAliveUitlitybyCrunchify(url,Param.HTTPS_PORT.getCode())) {
-                    newUrl = Param.HTTPS_PORT.getMsg() + "://" + url;
-                } else if (HttpUtil.isSocketAliveUitlitybyCrunchify(url,Param.HTTP_PORT.getCode())) {
-                    newUrl = Param.HTTP_PORT.getMsg() + "://" + url;
-                } else {
-                    return set;
-                }
-            } else {
-                newUrl = url;
-            }
-            Map<String, String> header = new HashMap<>();
-            header.put("User-Agent", "  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0");
-            header.put("Accept", "  text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            header.put("Accept-Language", "zh-cn,zh;q=0.5");
-            header.put("Accept-Encoding", "gzip, deflate, sdch");
-            header.put("Connection", "keep-alive");
-            Document doc = Jsoup.connect(newUrl)
-                    .headers(header)
-                    .ignoreContentType(true)
-                    .timeout(5000).get();
-
+            //判断端口 转换url
+            String newUrl = HttpUtil.getNewUrl(url);
+            Document doc = HttpUtil.getDocByUrl(newUrl);
             //获取所有节点元素
             Elements elementAll = doc.getAllElements();
             for (Element element : elementAll) {
