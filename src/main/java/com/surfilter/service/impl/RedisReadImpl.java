@@ -109,6 +109,7 @@ public class RedisReadImpl implements RedisRead {
         //获取所有节点元素
         Elements elements = doc.select("head > script");
         Elements elementAll = doc.getAllElements();
+        Elements elementsByAttribute = doc.getElementsByAttribute("a");
         for (Element element : elementAll) {
             String textTmp = element.text();
             if (!textTmp.isEmpty()) {
@@ -120,7 +121,7 @@ public class RedisReadImpl implements RedisRead {
     }
 
     public static void main(String[] args) {
-        String text = new RedisReadImpl().getWebMessageText("147xxoo.com");
+        String text = new RedisReadImpl().getWebMessageText("173wyt.com");
         System.out.println(text);
     }
 
