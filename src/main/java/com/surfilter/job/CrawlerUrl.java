@@ -14,7 +14,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -42,14 +41,20 @@ public class CrawlerUrl implements Runnable {
         try {
             doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
         } catch (IOException e) {
+            try {
+                doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
         if (doc != null) {
             BufferedWriter bw = null;
             if (!doc.text().isEmpty()) {
-                Set<WordDO> wordDOSet = redisRead.getWebMessageText(url);
-                if (!wordDOSet.isEmpty()) {
-                    File file = new File("E://word_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis());
+                Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
+                String text = redisRead.getWebMessageText(url);
+                if (!wordDOSet.isEmpty() && text != null) {
+                    File file = new File("E://word_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                     File yesFile = null;
                     try {
                         bw = new BufferedWriter(new FileWriter(file));
@@ -64,25 +69,25 @@ public class CrawlerUrl implements Runnable {
                         Set<Keyword> yellowList =  yellowPatterns.searchKeyword(doc.text(),null);
                         Set<Keyword> waddingList =  wadingPatterns.searchKeyword(doc.text(),null);
                         Set<Keyword> whiteList = whitePatterns.searchKeyword(doc.text(),null);
+                        bw.write(text);
+//                        for (WordDO wordDO : wordDOSet) {
+//                            bw.write(wordDO.getWord() + " ");
+//                        }
+//                        FileUtil.writeKeyWordToFile(bw,vpnList);
+//                        FileUtil.writeKeyWordToFile(bw,yellowList);
+//                        FileUtil.writeKeyWordToFile(bw,waddingList);
 
-                        for (WordDO wordDO : wordDOSet) {
-                            bw.write(wordDO.getWord() + " ");
-                        }
-                        FileUtil.writeKeyWordToFile(bw,vpnList);
-                        FileUtil.writeKeyWordToFile(bw,yellowList);
-                        FileUtil.writeKeyWordToFile(bw,waddingList);
-
-                        if (!MyApplicationRunner.vpnWordList.isEmpty()) {
-                            bw.write("vpn词语所占比例" + MathUtil.accuracy(vpnList.size(),MyApplicationRunner.vpnWordList.size(),2) + "\r\n");
-                        }
-                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
-                            bw.write("涉黄词语所占比例" + MathUtil.accuracy(yellowList.size(),MyApplicationRunner.yellowWordList.size(),2) + "\r\n");
-                        }
-                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
-                            bw.write("涉赌词语所占比例" + MathUtil.accuracy(waddingList.size(),MyApplicationRunner.wadingListList.size(),2) + "\r\n");
-                        }
+//                        if (!MyApplicationRunner.vpnWordList.isEmpty()) {
+//                            bw.write("vpn词语所占比例" + MathUtil.accuracy(vpnList.size(),MyApplicationRunner.vpnWordList.size(),2) + "\r\n");
+//                        }
+//                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
+//                            bw.write("涉黄词语所占比例" + MathUtil.accuracy(yellowList.size(),MyApplicationRunner.yellowWordList.size(),2) + "\r\n");
+//                        }
+//                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
+//                            bw.write("涉赌词语所占比例" + MathUtil.accuracy(waddingList.size(),MyApplicationRunner.wadingListList.size(),2) + "\r\n");
+//                        }
                         bw.flush();
-                        if ((!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty()) {
+                        if ((!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1) {
                             yesFile = new File("E://yes_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                             if (!yesFile.exists()) {
                                 yesFile.createNewFile();

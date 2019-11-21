@@ -29,7 +29,7 @@ public class UrlController {
     @RequestMapping(value = "/getWord",method = {RequestMethod.POST})
     @ResponseBody
     public CommonReturnType getWord(@RequestParam(name="url")String url) throws BusinessException {
-        Set<WordDO> set = redisRead.getWebMessageText(url);
+        Set<WordDO> set = redisRead.getWebMessageWord(url);
         return CommonReturnType.create(set,0, set.size());
     }
 
@@ -45,7 +45,7 @@ public class UrlController {
     @RequestMapping(value = "/webMagic",method = {RequestMethod.POST})
     @ResponseBody
     public CommonReturnType webMagic(@RequestParam(name="url")String url) throws BusinessException {
-        Set<WordDO> set = redisRead.getWebMessageText(url);
+        Set<WordDO> set = redisRead.getWebMessageWord(url);
         return CommonReturnType.create(set,0, set.size());
     }
 }

@@ -24,3 +24,9 @@ spring:
     password:
 mybatis:
   mapper-locations: classpath:mapping/*.xml
+
+#启动SeimiCrawler
+seimi:
+  crawler:
+    enabled: true
+    names: basic

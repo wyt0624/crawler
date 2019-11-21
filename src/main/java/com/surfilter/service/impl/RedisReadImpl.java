@@ -59,7 +59,7 @@ public class RedisReadImpl implements RedisRead {
         for (String url : urlList) {
             //爬取当前url
             try {
-                Set<WordDO> set = getWebMessageText(url);
+                Set<WordDO> set = getWebMessageWord(url);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -77,43 +77,51 @@ public class RedisReadImpl implements RedisRead {
     }
 
 
-    /**
-     * 爬取url，获取文本信息
-     * @param url
-     */
+
     @Override
-    public Set<WordDO> getWebMessageText(String url) {
-        HttpUtil.trustEveryone();
+    public Set<WordDO> getWebMessageWord(String url) {
         Set<WordDO> set = new HashSet<>();
+        String text = getWebMessageText(url);
+        //分词 去除特殊符号
+        List<String> wordList = null;
         try {
-            //判断端口 转换url
-            String newUrl = HttpUtil.getNewUrl(url);
-            Document doc = HttpUtil.getDocByUrl(newUrl);
-            //获取所有节点元素
-            Elements elementAll = doc.getAllElements();
-            for (Element element : elementAll) {
-                String text = element.text();
-                //分词 去除特殊符号
-                List<String> wordList = chineseParticiple.getChineseWord(StringUtil.RemoveSymbol(text));
-                for (String word : wordList) {
-                    WordDO wordDO = new WordDO();
-                    wordDO.setWord(word);
-                    set.add(wordDO);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            wordList = chineseParticiple.getChineseWord(StringUtil.RemoveSymbol(text));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        for (String word : wordList) {
+            WordDO wordDO = new WordDO();
+            wordDO.setWord(word);
+            set.add(wordDO);
         }
         return set;
     }
 
-    public static void main(String[] args) {
-        Set<WordDO> set = new RedisReadImpl().getWebMessageText("http://fsxys.com/");
-        for (WordDO wordDO : set) {
-            System.out.println(wordDO.getWord());
+
+
+    @Override
+    public String getWebMessageText(String url) {
+        HttpUtil.trustEveryone();
+        String text = null;
+        //判断端口 转换url
+        String newUrl = HttpUtil.getNewUrl(url);
+        Document doc = HttpUtil.getPageContent(newUrl);
+        //获取所有节点元素
+        Elements elements = doc.select("head > script");
+        Elements elementAll = doc.getAllElements();
+        for (Element element : elementAll) {
+            String textTmp = element.text();
+            if (!textTmp.isEmpty()) {
+                text = textTmp + text;
+            }
         }
+
+        return text;
+    }
+
+    public static void main(String[] args) {
+        String text = new RedisReadImpl().getWebMessageText("147xxoo.com");
+        System.out.println(text);
     }
 
 

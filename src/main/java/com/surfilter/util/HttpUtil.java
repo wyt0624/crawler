@@ -1,6 +1,14 @@
 package com.surfilter.util;
 
 import com.surfilter.enums.Param;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -10,10 +18,17 @@ import java.net.*;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpUtil {
+
+    private static String User_Agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.160 Safari/537.22";
+    private static String Accept = "text/html";
+    private static String Accept_Charset = "utf-8";
+    private static String Accept_EnCoding = "gzip";
+    private static String Accept_Language = "en-Us,en";
 
     /**
      * 根据url判断服务是否存在
@@ -139,4 +154,48 @@ public class HttpUtil {
         return newUrl;
     }
 
+
+    public static String getPageContent_addHeader(String url) {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpGet httpget = new HttpGet(url);
+            httpget.addHeader("Accept", Accept);
+            httpget.addHeader("Accept-Charset", Accept_Charset);
+            httpget.addHeader("Accept-Encoding", Accept_EnCoding);
+            httpget.addHeader("Accept-Language", Accept_Language);
+            httpget.addHeader("User-Agent", User_Agent);
+            ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+                public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                    int status = response.getStatusLine().getStatusCode();
+                    if (status >= 200 && status < 300) {
+                        HttpEntity entity = response.getEntity();
+                        System.out.println(status);
+                        return entity != null ? EntityUtils.toString(entity) : null;
+                    } else {
+                        System.out.println(status);
+                        Date date = new Date();
+                        System.out.println(date);
+                        System.exit(0);
+                        throw new ClientProtocolException("Unexpected response status: " + status);
+                    }
+                }
+            };
+            String responseBody = httpclient.execute(httpget, responseHandler);
+            return responseBody;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static Document getPageContent(String url) {
+        Document document = Jsoup.parse(getPageContent_addHeader(url));
+        return document;
+    }
 }
