@@ -47,7 +47,9 @@ public class ScheduledTasks {
         fileRead.doMainToRedis("E:\\url_data\\");
     }
 
-//    @Scheduled(fixedRate = 5000)
+    /**
+     * 读取Redis
+     */
     public synchronized void ReadRedis(){
         logger.info("ReadRedis start");
         //读取Redis中是否有结果

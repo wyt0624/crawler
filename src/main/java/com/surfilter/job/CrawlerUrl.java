@@ -86,8 +86,10 @@ public class CrawlerUrl implements Runnable {
 //                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
 //                            bw.write("涉赌词语所占比例" + MathUtil.accuracy(waddingList.size(),MyApplicationRunner.wadingListList.size(),2) + "\r\n");
 //                        }
+
                         bw.flush();
-                        if ((!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1) {
+                        boolean isFlag = (!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1;
+                        if (isFlag) {
                             yesFile = new File("E://yes_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                             if (!yesFile.exists()) {
                                 yesFile.createNewFile();
