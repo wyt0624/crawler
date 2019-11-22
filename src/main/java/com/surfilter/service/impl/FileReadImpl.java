@@ -1,8 +1,10 @@
 package com.surfilter.service.impl;
 
+import com.surfilter.MyApplicationRunner;
 import com.surfilter.enums.Param;
 import com.surfilter.service.FileRead;
 import com.surfilter.util.GsonUtil;
+import com.surfilter.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -41,12 +43,14 @@ public class FileReadImpl implements FileRead {
                 String str;
                 // 按行读取字符串
                 while ((str = bf.readLine()) != null) {
+                   // if (StringUtil.isWhiteUrl(str)) {
                     domainList.add(str.replaceAll("\"",""));
                     if(domainList.size()>=1000){
                         String distSeg = GsonUtil.getJsonStringByObject(domainList);
                         stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
                         domainList.clear();
                     }
+                    //}
                 }
                 bf.close();
                 fr.close();

@@ -1,5 +1,8 @@
 package com.surfilter.util;
 
+import com.surfilter.MyApplicationRunner;
+import com.surfilter.dataobject.UrlDO;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,8 +18,8 @@ public class StringUtil {
      * @return
      * @throws Exception
      */
-    public static  String RemoveSymbol (String str) throws  Exception{
-        String regEx="[a-zA-Z0-9\\u4e00-\\u9fa5]";
+    public static  String RemoveSymbol(String str) throws  Exception{
+        String regEx="[\\u4e00-\\u9fa5]";
         Pattern p   =   Pattern.compile(regEx);
         Matcher m   =   p.matcher(str);
         StringBuffer sb = new StringBuffer();
@@ -24,6 +27,20 @@ public class StringUtil {
             sb.append(m.group());
         }
         return new String(sb);
+    }
+
+    public static boolean isWhiteUrl(String url) {
+        boolean flag = false;
+        if (!MyApplicationRunner.whiteUrlList.isEmpty()) {
+            for (UrlDO urlDO : MyApplicationRunner.whiteUrlList) {
+                if (urlDO.getUrl().contains(url)) {
+                    flag = true;
+                } else {
+                    flag = false;
+                }
+            }
+        }
+        return flag;
     }
 
 }

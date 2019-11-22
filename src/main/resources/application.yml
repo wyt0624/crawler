@@ -26,7 +26,11 @@ mybatis:
   mapper-locations: classpath:mapping/*.xml
 
 #启动SeimiCrawler
-seimi:
-  crawler:
-    enabled: true
-    names: basic
+#seimi:
+#  crawler:
+#    enabled: true
+#    names: basic
+
+
+job:
+  param:

@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class ScheduledTasks {
@@ -37,6 +38,8 @@ public class ScheduledTasks {
 
     @Autowired
     private DataSource dataSource;
+
+    public static AtomicLong atomicLong;
 
     /**
      * 将数据打入Redis中

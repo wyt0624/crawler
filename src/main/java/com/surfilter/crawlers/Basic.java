@@ -32,7 +32,7 @@ public class Basic extends BaseSeimiCrawler {
         System.out.println(data.toString());
         JXDocument doc = response.document();
         try {
-            List<Object> urls = doc.sel("/html/head/script[2]/text()");
+            List<Object> urls = doc.sel("");
             logger.info("{}", urls.size());
             for (Object s:urls){
                 push(Request.build(s.toString(),Basic::getTitle));

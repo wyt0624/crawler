@@ -35,9 +35,8 @@ public class CrawlerUrl implements Runnable {
 
     @Override
     public void run() {
-        redisTemplate = ApplicationContextUtil.getBean(StringRedisTemplate.class);
-        redisRead = ApplicationContextUtil.getBean(RedisRead.class);
         Document doc = null;
+        String text = null;
         try {
             doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
         } catch (IOException e) {
@@ -48,12 +47,16 @@ public class CrawlerUrl implements Runnable {
             }
             e.printStackTrace();
         }
-        if (doc != null) {
+        try {
+            text = StringUtil.RemoveSymbol(doc.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (text != null) {
             BufferedWriter bw = null;
-            if (!doc.text().isEmpty()) {
-                Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
-                String text = redisRead.getWebMessageText(url);
-                if (!wordDOSet.isEmpty() && text != null) {
+            if (!text.isEmpty()) {
+              //  Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
+                if (text != null) {
                     File file = new File("E://word_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                     File yesFile = null;
                     try {
@@ -65,10 +68,10 @@ public class CrawlerUrl implements Runnable {
                         Patterns yellowPatterns = new Patterns(MyApplicationRunner.yellowWordList);
                         Patterns wadingPatterns = new Patterns(MyApplicationRunner.wadingListList);
                         Patterns whitePatterns = new Patterns(MyApplicationRunner.whiteWordListList);
-                        Set<Keyword> vpnList =  vpnPatterns.searchKeyword(doc.text(),null);
-                        Set<Keyword> yellowList =  yellowPatterns.searchKeyword(doc.text(),null);
-                        Set<Keyword> waddingList =  wadingPatterns.searchKeyword(doc.text(),null);
-                        Set<Keyword> whiteList = whitePatterns.searchKeyword(doc.text(),null);
+                        Set<Keyword> vpnList =  vpnPatterns.searchKeyword(doc.toString(),null);
+                        Set<Keyword> yellowList =  yellowPatterns.searchKeyword(doc.toString(),null);
+                        Set<Keyword> waddingList =  wadingPatterns.searchKeyword(doc.toString(),null);
+                        Set<Keyword> whiteList = whitePatterns.searchKeyword(doc.toString(),null);
                         bw.write(text);
 //                        for (WordDO wordDO : wordDOSet) {
 //                            bw.write(wordDO.getWord() + " ");

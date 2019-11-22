@@ -14,6 +14,8 @@ public enum Param implements CommonParam{
     YELLOW_WORD(2,"涉黄词语"),
     WADING_WORD(3,"涉赌词语"),
     WHITE_WORD(4,"白名单词语"),
+
+    WHITE_URL(1,"白名单URL"),
     ;
 
     private Param(int code,String msg){

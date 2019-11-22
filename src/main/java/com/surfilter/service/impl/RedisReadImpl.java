@@ -107,21 +107,22 @@ public class RedisReadImpl implements RedisRead {
         String newUrl = HttpUtil.getNewUrl(url);
         Document doc = HttpUtil.getPageContent(newUrl);
         //获取所有节点元素
-        Elements elements = doc.select("head > script");
-        Elements elementAll = doc.getAllElements();
-        Elements elementsByAttribute = doc.getElementsByAttribute("a");
-        for (Element element : elementAll) {
-            String textTmp = element.text();
-            if (!textTmp.isEmpty()) {
-                text = textTmp + text;
-            }
-        }
+//        Elements elementsTitle = doc.select("head > title");
+//        Elements elementsMeta = doc.select("head > meta");
+//        Elements elementAll = doc.getAllElements();
+//        Elements elementsByAttribute = doc.getElementsByAttribute("a");
+//        for (Element element : elementAll) {
+//            String textTmp = element.text();
+//            if (!textTmp.isEmpty()) {
+//                text = textTmp + text;
+//            }
+//        }
 
-        return text;
+        return doc.toString();
     }
 
     public static void main(String[] args) {
-        String text = new RedisReadImpl().getWebMessageText("173wyt.com");
+        String text = new RedisReadImpl().getWebMessageText("http://4aaxx.com/");
         System.out.println(text);
     }
 

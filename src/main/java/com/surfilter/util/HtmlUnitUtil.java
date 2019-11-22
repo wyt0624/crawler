@@ -17,29 +17,34 @@ public class HtmlUnitUtil {
 
     private static WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-    public static void getHtml(String url) {
+    public static String getHtml(String url) {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.setJavaScriptTimeout(1000000);
         webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setTimeout(10000);
+        webClient.getOptions().setTimeout(100000);
         webClient.getOptions().setUseInsecureSSL(true);
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        String xml = null;
         try {
             HtmlPage htmlPage = webClient.getPage(url);
-            String xml = htmlPage.asText();
-            HtmlElement documentElement = htmlPage.getDocumentElement();
-            DomNode domNode = htmlPage.querySelector("head > script");
-            DomElement nextElementSibling = domNode.getNextElementSibling();
-            String asText = domNode.asText();
-            System.out.println(asText);
-            System.out.println(xml);
+            DomNode domNode = htmlPage.querySelector("head > meta");
+            String doc = domNode.asText();
+            String textContent = htmlPage.getPage().getTextContent();
+            xml = htmlPage.asText();
+//            HtmlElement documentElement = htmlPage.getDocumentElement();
+//            DomNode domNode = htmlPage.querySelector("head > script");
+//            DomElement nextElementSibling = domNode.getNextElementSibling();
+//            String asText = domNode.asText();
+//            System.out.println(asText);
+//            System.out.println(xml);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return xml;
     }
 
     public static void main(String[] args) {
-        getHtml(HttpUtil.getNewUrl("http://147xxoo.com"));
+        getHtml(HttpUtil.getNewUrl("http://4aaxx.com/"));
     }
 }
