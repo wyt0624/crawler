@@ -35,4 +35,12 @@ public class FileUtil {
             }
         }
     }
+
+    public static void isDirctionary(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+    }
+
 }
