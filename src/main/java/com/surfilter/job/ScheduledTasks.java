@@ -37,12 +37,8 @@ public class ScheduledTasks {
     @Autowired
     private StartJob startJob;
 
-    @Autowired
-    private DataSource dataSource;
-
     @Value("${job.param.read-redis-path}")
     private String readToRedisPath;
-
 
     public static AtomicLong atomicLong;
 
@@ -75,7 +71,7 @@ public class ScheduledTasks {
             Set<String> urlSet = new Gson().fromJson(ips, new TypeToken<Set<String>>() {
             }.getType());
             atomicLong.set(urlSet.size());
-            startJob.connectIpServer(urlSet);
+            startJob.startCrawlerServer(urlSet);
         } else {
             logger.debug("Redis key" + Param.REDIS_URL.getMsg() + "为空");
         }

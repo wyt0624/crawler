@@ -124,7 +124,7 @@ public class HttpUtil {
      * @return
      * @throws IOException
      */
-    public static Document getDocByUrl(String url) throws IOException {
+    public static Document getDocByUrl(String url, int timeout) throws IOException {
         Map<String, String> header = new HashMap<>();
         header.put("User-Agent", "  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0");
         header.put("Accept", "  text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
@@ -134,7 +134,7 @@ public class HttpUtil {
         Document doc = Jsoup.connect(url)
                 .headers(header)
                 .ignoreContentType(true)
-                .timeout(5000).get();
+                .timeout(timeout).get();
         return doc;
     }
 

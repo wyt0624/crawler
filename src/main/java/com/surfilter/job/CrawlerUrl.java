@@ -42,10 +42,10 @@ public class CrawlerUrl implements Runnable {
         Document doc = null;
         String text = null;
         try {
-            doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
+            doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url),5000);
         } catch (IOException e) {
             try {
-                doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
+                doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url),8000);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
