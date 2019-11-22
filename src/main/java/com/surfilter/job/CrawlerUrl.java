@@ -41,83 +41,86 @@ public class CrawlerUrl implements Runnable {
         ScheduledTasks.atomicLong.getAndDecrement();
         Document doc = null;
         String text = null;
-        try {
-            doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
-        } catch (IOException e) {
+        //是否能ping通  如果ping不通 直接标记 不能访问。
+        boolean ispass = Ping.ping(url,1000,2000);//标记是否能访问。
+        if (ispass) {
             try {
                 doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            } catch (IOException e) {
+                try {
+                    doc = HttpUtil.getDocByUrl(HttpUtil.getNewUrl(url));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                e.printStackTrace();
             }
-            e.printStackTrace();
-        }
-        try {
-            text = StringUtil.RemoveSymbol(doc.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (text != null) {
-            BufferedWriter bw = null;
-            if (!text.isEmpty()) {
-              //  Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
-                if (text != null) {
-                    File file = new File(writeFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
-                    File yesFile = null;
-                    try {
-                        bw = new BufferedWriter(new FileWriter(file));
-                        if(!file.exists()) {
-                            file.createNewFile();
-                        }
-                        Patterns vpnPatterns = new Patterns(MyApplicationRunner.vpnWordList);
-                        Patterns yellowPatterns = new Patterns(MyApplicationRunner.yellowWordList);
-                        Patterns wadingPatterns = new Patterns(MyApplicationRunner.wadingListList);
-                        Patterns whitePatterns = new Patterns(MyApplicationRunner.whiteWordListList);
-                        Set<Keyword> vpnList =  vpnPatterns.searchKeyword(doc.toString(),null);
-                        Set<Keyword> yellowList =  yellowPatterns.searchKeyword(doc.toString(),null);
-                        Set<Keyword> waddingList =  wadingPatterns.searchKeyword(doc.toString(),null);
-                        Set<Keyword> whiteList = whitePatterns.searchKeyword(doc.toString(),null);
-                        bw.write(text);
-//                        for (WordDO wordDO : wordDOSet) {
-//                            bw.write(wordDO.getWord() + " ");
-//                        }
-//                        FileUtil.writeKeyWordToFile(bw,vpnList);
-//                        FileUtil.writeKeyWordToFile(bw,yellowList);
-//                        FileUtil.writeKeyWordToFile(bw,waddingList);
-
-//                        if (!MyApplicationRunner.vpnWordList.isEmpty()) {
-//                            bw.write("vpn词语所占比例" + MathUtil.accuracy(vpnList.size(),MyApplicationRunner.vpnWordList.size(),2) + "\r\n");
-//                        }
-//                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
-//                            bw.write("涉黄词语所占比例" + MathUtil.accuracy(yellowList.size(),MyApplicationRunner.yellowWordList.size(),2) + "\r\n");
-//                        }
-//                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
-//                            bw.write("涉赌词语所占比例" + MathUtil.accuracy(waddingList.size(),MyApplicationRunner.wadingListList.size(),2) + "\r\n");
-//                        }
-
-                        bw.flush();
-                        boolean isFlag = (!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1;
-                        if (isFlag) {
-                            yesFile = new File(writeYesFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
-                            if (!yesFile.exists()) {
-                                yesFile.createNewFile();
+            try {
+                text = StringUtil.RemoveSymbol(doc.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (text != null) {
+                BufferedWriter bw = null;
+                if (!text.isEmpty()) {
+                  //  Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
+                    if (text != null) {
+                        File file = new File(writeFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
+                        File yesFile = null;
+                        try {
+                            bw = new BufferedWriter(new FileWriter(file));
+                            if(!file.exists()) {
+                                file.createNewFile();
                             }
-                            FileUtil.copyFileUsingFileChannels(file,yesFile);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }finally {
-                        if (bw != null) {
-                            try {
-                                bw.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            Patterns vpnPatterns = new Patterns(MyApplicationRunner.vpnWordList);
+                            Patterns yellowPatterns = new Patterns(MyApplicationRunner.yellowWordList);
+                            Patterns wadingPatterns = new Patterns(MyApplicationRunner.wadingListList);
+                            Patterns whitePatterns = new Patterns(MyApplicationRunner.whiteWordListList);
+                            Set<Keyword> vpnList =  vpnPatterns.searchKeyword(doc.toString(),null);
+                            Set<Keyword> yellowList =  yellowPatterns.searchKeyword(doc.toString(),null);
+                            Set<Keyword> waddingList =  wadingPatterns.searchKeyword(doc.toString(),null);
+                            Set<Keyword> whiteList = whitePatterns.searchKeyword(doc.toString(),null);
+                            bw.write(text);
+    //                        for (WordDO wordDO : wordDOSet) {
+    //                            bw.write(wordDO.getWord() + " ");
+    //                        }
+    //                        FileUtil.writeKeyWordToFile(bw,vpnList);
+    //                        FileUtil.writeKeyWordToFile(bw,yellowList);
+    //                        FileUtil.writeKeyWordToFile(bw,waddingList);
+
+    //                        if (!MyApplicationRunner.vpnWordList.isEmpty()) {
+    //                            bw.write("vpn词语所占比例" + MathUtil.accuracy(vpnList.size(),MyApplicationRunner.vpnWordList.size(),2) + "\r\n");
+    //                        }
+    //                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
+    //                            bw.write("涉黄词语所占比例" + MathUtil.accuracy(yellowList.size(),MyApplicationRunner.yellowWordList.size(),2) + "\r\n");
+    //                        }
+    //                        if (!MyApplicationRunner.wadingListList.isEmpty()) {
+    //                            bw.write("涉赌词语所占比例" + MathUtil.accuracy(waddingList.size(),MyApplicationRunner.wadingListList.size(),2) + "\r\n");
+    //                        }
+
+                            bw.flush();
+                            boolean isFlag = (!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1;
+                            if (isFlag) {
+                                yesFile = new File(writeYesFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
+                                if (!yesFile.exists()) {
+                                    yesFile.createNewFile();
+                                }
+                                FileUtil.copyFileUsingFileChannels(file,yesFile);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            if (bw != null) {
+                                try {
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
-                }
 
+                }
             }
         }
-
     }
 }
