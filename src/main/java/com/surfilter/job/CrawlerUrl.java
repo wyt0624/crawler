@@ -8,6 +8,7 @@ import com.surfilter.service.RedisRead;
 import com.surfilter.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.io.BufferedWriter;
@@ -28,13 +29,16 @@ public class CrawlerUrl implements Runnable {
     }
 
 
-    private RedisRead redisRead;
+    @Value("${job.param.write-file-path}")
+    private String writeFilePath;
 
-    private StringRedisTemplate redisTemplate;
+    @Value("${job.param.yes-file-path}")
+    private String writeYesFilePath;
 
 
     @Override
     public void run() {
+        ScheduledTasks.atomicLong.getAndDecrement();
         Document doc = null;
         String text = null;
         try {
@@ -57,7 +61,7 @@ public class CrawlerUrl implements Runnable {
             if (!text.isEmpty()) {
               //  Set<WordDO> wordDOSet = redisRead.getWebMessageWord(url);
                 if (text != null) {
-                    File file = new File("E://word_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
+                    File file = new File(writeFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                     File yesFile = null;
                     try {
                         bw = new BufferedWriter(new FileWriter(file));
@@ -93,7 +97,7 @@ public class CrawlerUrl implements Runnable {
                         bw.flush();
                         boolean isFlag = (!vpnList.isEmpty() || !yellowList.isEmpty() || !waddingList.isEmpty()) && whiteList.isEmpty() && yellowList.size() > 1;
                         if (isFlag) {
-                            yesFile = new File("E://yes_data//" + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
+                            yesFile = new File(writeYesFilePath + url.replaceAll("\"","") + "_" + System.currentTimeMillis() + ".txt");
                             if (!yesFile.exists()) {
                                 yesFile.createNewFile();
                             }

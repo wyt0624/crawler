@@ -8,6 +8,7 @@ import com.surfilter.service.impl.RedisReadImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,10 @@ public class ScheduledTasks {
     @Autowired
     private DataSource dataSource;
 
+    @Value("${job.param.read-redis-path}")
+    private String readToRedisPath;
+
+
     public static AtomicLong atomicLong;
 
     /**
@@ -47,7 +52,7 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 5000)
     public void startLoadFile(){
         logger.info("LoadFile start");
-        fileRead.doMainToRedis("E:\\url_data\\");
+        fileRead.doMainToRedis(readToRedisPath);
     }
 
     /**
@@ -65,10 +70,11 @@ public class ScheduledTasks {
     }
     @Scheduled(fixedRate = 10000)
     public void startCrawler() {
-        if (readRedis.readRedis(Param.REDIS_URL.getMsg())) {
+        if (readRedis.readRedis(Param.REDIS_URL.getMsg()) && atomicLong.get() < 50) {
             String ips = redisTemplate.opsForList().leftPop(Param.REDIS_URL.getMsg(), 1L, TimeUnit.SECONDS);
             Set<String> urlSet = new Gson().fromJson(ips, new TypeToken<Set<String>>() {
             }.getType());
+            atomicLong.set(urlSet.size());
             startJob.connectIpServer(urlSet);
         } else {
             logger.debug("Redis key" + Param.REDIS_URL.getMsg() + "为空");
