@@ -14,7 +14,7 @@ public class Ping {
         Runtime r = Runtime.getRuntime();  // 将要执行的ping命令,此命令是windows格式的命令
         String pingCommand = "ping " + ipAddress + " -n " + pingTimes    + " -w " + timeOut;
         try {   // 执行命令并获取输出
-       //     System.out.println(pingCommand);
+            System.out.println(pingCommand);
             Process p = r.exec(pingCommand);
             if (p == null) {
                 return false;

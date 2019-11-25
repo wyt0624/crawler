@@ -43,4 +43,37 @@ public class FileUtil {
         }
     }
 
+    /**
+     *
+     * @param content 保存的文本内容
+     * @param fileName //保存的文件名称。
+     */
+    public static void  saveSnapshot(String content,String fileName){
+        BufferedWriter bw = null;
+     //   File file = new File(path + url.replace("\"","") + "_" + System.currentTimeMillis() + ".txt");
+        File file = new File(fileName);
+        File yesFile = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(file));
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+            bw.write(content);
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+
 }
