@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,33 +34,36 @@ public class FileReadImpl implements FileRead {
      */
     public void doMainToRedis(String path) {
         File file=new File(path);
-        File[] files = file.listFiles();
+        File[] files = file.listFiles(new FilenameFilter(){
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.endsWith(".bak");
+            }
+        });
         Set<String> domainList=new HashSet<>();
         try {
             for(File tempFile:files){
-                if(tempFile.getName().contains("bak")){continue;}
+                //if(tempFile.getName().contains("bak")){continue;}
                 FileReader fr = new FileReader(tempFile.getPath());
                 BufferedReader bf = new BufferedReader(fr);
                 String str;
                 // 按行读取字符串
                 while ((str = bf.readLine()) != null) {
-                   // if (StringUtil.isWhiteUrl(str)) {
-                    domainList.add(str.replaceAll("\"",""));
+                    domainList.add(str.replace("\"",""));
                     if(domainList.size()>=1000){
                         String distSeg = GsonUtil.getJsonStringByObject(domainList);
+                        //入消息redis队列
                         stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
                         domainList.clear();
                     }
-                    //}
                 }
-                bf.close();
-                fr.close();
-                tempFile.renameTo(new File(tempFile.getPath()+".bak"));
                 String distSeg = GsonUtil.getJsonStringByObject(domainList);
                 stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
                 domainList.clear();
+                bf.close();
+                fr.close();
+                tempFile.renameTo(new File(tempFile.getPath()+".bak"));
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }

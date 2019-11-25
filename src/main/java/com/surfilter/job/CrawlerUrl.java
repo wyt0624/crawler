@@ -62,8 +62,7 @@ public class CrawlerUrl implements Runnable {
                 e1.printStackTrace();
             }
             finally {
-
-        }
+            }
         } else {
             //无法打开网页。
         }
