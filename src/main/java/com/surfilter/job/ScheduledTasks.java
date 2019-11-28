@@ -13,10 +13,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,7 +47,7 @@ public class ScheduledTasks {
     /**
      * 将数据打入Redis中
      */
-    @Scheduled(fixedRate = 5000)
+   /* @Scheduled(fixedRate = 5000)*/
     public void startLoadFile(){
         logger.info("LoadFile start");
         fileRead.doMainToRedis(readToRedisPath);

@@ -10,9 +10,7 @@ import java.util.concurrent.Executors;
 
 @Component
 public class StartJob {
-
     private static final ExecutorService executorService = Executors.newFixedThreadPool(50);
-
     public void startCrawlerServer(Set<String> urlList){
         //遍历每个程序
         for(String url : urlList){

@@ -7,7 +7,7 @@ import lombok.Data;
  * 白名单bean
  */
 @Data
-public class WhiteUrl extends BaseEntity{
+public class WhiteUrl {
     private Long id;
     private String url;
     private String name;
