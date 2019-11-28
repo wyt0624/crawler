@@ -59,11 +59,15 @@ mybatis:
 
 
 #配置读取写入文件路径
-job:
-  param:
-    read-redis-path: D:\\data\\url_data\\
-    write-file-path: D:\\data\\word_data\\
-    yes-file-path: D:\\data\\yes_data\\
+base:
+  info:
+    urlReadPath: D:/data/url_data/
+    urlSnapshot: D:/data/word_data/
 redis-info:
   key:
-    while_url: domain_whilt_url
+    whileUrl: domain_whilt_url
+    domainUrl: domain_url
+    crawlerQueue: crawler_queue
+job:
+  param:
+    readFile: 0/5 * * * * ?

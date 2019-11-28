@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Data
-@ConfigurationProperties(prefix = "redis-info.key")
-public class RedisKeyInfo {
-    private String whileUrl;
-    private String domainUrl;
-    private String crawlerQueue;
+@ConfigurationProperties(prefix = "base.info")
+public class BaseInfo {
+    private String urlReadPath; //url读取目录
+    private String urlSnapshot; //快照保存目录。
+
 }

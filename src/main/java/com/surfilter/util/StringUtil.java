@@ -1,8 +1,5 @@
 package com.surfilter.util;
 
-import com.surfilter.MyApplicationRunner;
-import com.surfilter.dataobject.UrlDO;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,18 +26,18 @@ public class StringUtil {
         return new String(sb);
     }
 
-    public static boolean isWhiteUrl(String url) {
-        boolean flag = false;
-        if (!MyApplicationRunner.whiteUrlList.isEmpty()) {
-            for (UrlDO urlDO : MyApplicationRunner.whiteUrlList) {
-                if (urlDO.getUrl().contains(url)) {
-                    flag = true;
-                } else {
-                    flag = false;
-                }
-            }
-        }
-        return flag;
-    }
+//    public static boolean isWhiteUrl(String url) {
+//        boolean flag = false;
+//        if (!MyApplicationRunner.whiteUrlList.isEmpty()) {
+//            for (UrlDO urlDO : MyApplicationRunner.whiteUrlList) {
+//                if (urlDO.getUrl().contains(url)) {
+//                    flag = true;
+//                } else {
+//                    flag = false;
+//                }
+//            }
+//        }
+//        return flag;
+//    }
 
 }
