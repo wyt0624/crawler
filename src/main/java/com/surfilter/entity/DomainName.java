@@ -7,7 +7,7 @@ import lombok.Data;
  * 域名基础类
  */
 @Data
-public class DomainName {
+public class DomainName extends  BaseEntity{
     /**
      * 域名
      */

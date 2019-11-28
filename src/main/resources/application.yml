@@ -44,6 +44,9 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapping/*.xml
+  configuration:
+    map-underscore-to-camel-case: true #启用驼峰是命名。
+  type-aliases-package: com.surfilter.entity
 
 #启动SeimiCrawler
 #seimi:

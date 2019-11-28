@@ -38,8 +38,8 @@ public class MyApplicationRunner implements ApplicationRunner {
     @Autowired
     private WordMapper wordMapper;
 
-    @Autowired
-    private UrlMapper urlMapper;
+//    @Autowired
+//    private UrlMapper urlMapper;
 
     private String readRedisPath;
 
@@ -62,7 +62,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         yellowWordList = wordMapper.selectKeyWordByType(Param.YELLOW_WORD.getCode());
         wadingListList = wordMapper.selectKeyWordByType(Param.WADING_WORD.getCode());
         whiteWordListList = wordMapper.selectKeyWordByType(Param.WHITE_WORD.getCode());
-        whiteUrlList = urlMapper.selectUrlListByType(Param.WHITE_URL.getCode());
+        //whiteUrlList = urlMapper.selectUrlListByType(Param.WHITE_URL.getCode());
     }
 
     /**

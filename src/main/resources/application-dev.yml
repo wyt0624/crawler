@@ -14,16 +14,39 @@ spring:
     timeout: 5000ms
     host: 172.30.154.203
     port: 6361
-
-  # clickhouse
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
-    url: jdbc:clickhouse://172.30.154.50:8123/analysis
-    username:
-    password:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.30.154.203:3306/crawler?characterEncoding=utf8&useSSL=true
+      username: root
+      password: 123456
+      initial-size: 5
+      min-idle: 5
+      max-active: 100
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+
+# clickhouse
+#  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+#    url: jdbc:clickhouse://172.30.154.50:8123/analysis
+#    username:
+#    password:
+
+
 mybatis:
   mapper-locations: classpath:mapping/*.xml
+  configuration:
+    map-underscore-to-camel-case: true #启用驼峰是命名。
+  type-aliases-package: com.surfilter.entity
 
 #启动SeimiCrawler
 #seimi:
@@ -37,4 +60,4 @@ job:
   param:
     read-redis-path: D:\\data\\url_data\\
     write-file-path: D:\\data\\word_data\\
-    yes-file-path: D:\\data\\yes_
+    yes-file-path: D:\\data\\yes_data\\

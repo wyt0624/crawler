@@ -3,12 +3,12 @@
 <mapper namespace="com.surfilter.dao.UrlMapper">
 
 
-    <!--<select id="selectUrlListByType" parameterType="java.lang.Integer" resultType="com.surfilter.dataobject.UrlDO">
-        select
-        url
-        from url
-        <where>
-            url_type = #{urlType}
-        </where>
-    </select>-->
+    <!--<select id="selectUrlListByType" parameterType="java.lang.Integer" resultType="com.surfilter.dataobject.UrlDO">-->
+        <!--select-->
+        <!--url-->
+        <!--from url-->
+        <!--<where>-->
+            <!--url_type = #{urlType}-->
+        <!--</where>-->
+    <!--</select>-->
 </mapper>

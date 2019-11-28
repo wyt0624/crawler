@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surfilter.dao.WhiteUrlMapper">
+
+
+    <!--<select id="selectUrlListByType" parameterType="java.lang.Integer" resultType="com.surfilter.dataobject.UrlDO">
+        select
+        url
+        from url
+        <where>
+            url_type = #{urlType}
+        </where>
+    </select>-->
+    <select id = "listWhiteUrl" resultType="whiteUrl">
+        select id,url,name from white_url  limit 0,1000000
+    </select>
+</mapper>
