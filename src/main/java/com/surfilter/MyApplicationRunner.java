@@ -31,6 +31,8 @@ public class MyApplicationRunner implements ApplicationRunner {
     public static List<Keyword> wadingListList = new ArrayList<>();
     public static List<Keyword> whiteWordListList = new ArrayList<>();
 
+
+    public static String writeFilepath;
     public static List<UrlDO> whiteUrlList = new ArrayList<>();
 
     @Autowired
@@ -42,19 +44,20 @@ public class MyApplicationRunner implements ApplicationRunner {
     private String readRedisPath;
 
     @Value("${job.param.read-redis-path}")
-    private String readToRedisPath;
+    public  String readToRedisPath;
 
     @Value("${job.param.write-file-path}")
-    private String writeFilePath;
+    public String writeFilePath;
 
     @Value("${job.param.yes-file-path}")
-    private String writeYesFilePath;
+    public String writeYesFilePath;
 
 
     /**
      * 加载词语
      */
     public void loadWord() {
+        writeFilepath = writeFilePath;
         vpnWordList = wordMapper.selectKeyWordByType(Param.VPN_WORD.getCode());
         yellowWordList = wordMapper.selectKeyWordByType(Param.YELLOW_WORD.getCode());
         wadingListList = wordMapper.selectKeyWordByType(Param.WADING_WORD.getCode());

@@ -122,7 +122,7 @@ public class RedisReadImpl implements RedisRead {
     }
 
     public static void main(String[] args) {
-        String text = new RedisReadImpl().getWebMessageText("http://4aaxx.com/");
+        String text = new RedisReadImpl().getWebMessageText("https://www.baidu.com/");
         System.out.println(text);
     }
 

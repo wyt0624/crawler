@@ -40,7 +40,13 @@ public class ScheduledTasks {
     @Value("${job.param.read-redis-path}")
     private String readToRedisPath;
 
-    public static AtomicLong atomicLong;
+    @Value("${job.param.write-file-path}")
+    private String writeFilePath;
+
+    @Value("${job.param.yes-file-path}")
+    private String writeYesFilePath;
+
+    public static AtomicLong atomicLong = new AtomicLong(0);
 
     /**
      * 将数据打入Redis中
