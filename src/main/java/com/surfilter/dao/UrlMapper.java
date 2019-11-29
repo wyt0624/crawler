@@ -1,6 +1,10 @@
 package com.surfilter.dao;
 
-public interface UrlMapper {
+import com.surfilter.entity.DomainUrl;
 
-//    List<UrlDO> selectUrlListByType(Integer type);
+import java.util.List;
+
+public interface UrlMapper {
+    void addDomainUrl(List<DomainUrl> listUrl);
+
 }

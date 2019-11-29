@@ -3,12 +3,11 @@
 <mapper namespace="com.surfilter.dao.UrlMapper">
 
 
-    <!--<select id="selectUrlListByType" parameterType="java.lang.Integer" resultType="com.surfilter.dataobject.UrlDO">-->
-        <!--select-->
-        <!--url-->
-        <!--from url-->
-        <!--<where>-->
-            <!--url_type = #{urlType}-->
-        <!--</where>-->
-    <!--</select>-->
+    <insert id="addDomainUrl" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
+        insert into domain_url (url,operate_time,cache_status,crawling_status)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.url},#{item.operateTime},#{item.crawlingStatus},#{item.cacheStatus})
+        </foreach>
+    </insert>
 </mapper>
