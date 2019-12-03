@@ -1,5 +1,6 @@
 package com.surfilter.config;
 
+import com.surfilter.consumer.Consumer;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.service.IWhiteListService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.io.File;
+import java.util.*;
 
 /**
  * 初始化类
@@ -20,6 +19,7 @@ import java.io.File;
 @Configuration
 @Slf4j
 public class StartConfig {
+    Set<String> qqset = new HashSet<>();
     @Autowired
     IWhiteListService whiteListService;
     @Autowired
@@ -31,10 +31,24 @@ public class StartConfig {
 
     @PostConstruct
     public void init() {//将白名单放到 redis中。
+        initQqSet();
         //配置文件路径。如果没有目录则创建文件目录。
         initFile();
         //加载白名单。
         initWhite();
+        initCrawling();//初始化爬虫消费则。
+    }
+
+    private void initQqSet() {
+        qqset.add( "QQ客服" );
+        qqset.add( "QQ" );
+        qqset.add( "qq" );
+        qqset.add( "qq客服" );
+    }
+
+    private void initCrawling() {
+        Thread thread = new Thread( new Consumer());
+        thread.start();
     }
 
     private void initWhite() {
@@ -69,5 +83,13 @@ public class StartConfig {
         if(file1.isDirectory()) {
             file1.mkdirs();
         }
+    }
+
+    public Set<String> getQqset() {
+        return qqset;
+    }
+
+    public void setQqset(Set<String> qqset) {
+        this.qqset = qqset;
     }
 }

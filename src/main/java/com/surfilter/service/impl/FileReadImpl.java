@@ -22,7 +22,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class FileReadImpl implements FileRead {
-
     @Autowired
     BaseInfo baseInfo;
     @Autowired
@@ -46,6 +45,7 @@ public class FileReadImpl implements FileRead {
         List<DomainUrl> listUrl = new ArrayList<DomainUrl>();
         try {
             for(File tempFile:files){
+                log.info( "开始入库文件:{}" ,tempFile.getName() );
                 FileReader fr = new FileReader(tempFile.getPath());
                 BufferedReader bf = new BufferedReader(fr);
                 String str;
@@ -58,7 +58,10 @@ public class FileReadImpl implements FileRead {
                     if (StringUtils.isEmpty(str)) { //如果是空直接越过。
                         continue;
                     }
-                    str = str.replace("\"","");
+                    str = str.replace("\"","").trim();
+                    if (stringRedisTemplate.opsForHash().hasKey( redisKeyInfo.getWhileUrl() ,str ) ){  //判断是否在白名单中。
+                        continue;
+                    }
                     if (!stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getDomainUrl(), str )) {
                         try {
                             stringRedisTemplate.opsForSet().add( redisKeyInfo.getDomainUrl(), str );
@@ -86,13 +89,13 @@ public class FileReadImpl implements FileRead {
                     if (listUrl.size() > 990) {
                         try {
                             urlMapper.addDomainUrl(listUrl);
+                            log.info( "{} 入库 {} 条结果",tempFile.getName() , listUrl.size());
                         } catch (Exception e) {
                             e.printStackTrace();
                             flag = false;// 如果有出错 就需要重新 加载文件。。不能讲 文件改成.bak
                         }
                         listUrl.clear();
                     }
-
 //                    if(domainList.size()>=1000){
 //                        //String distSeg = GsonUtil.getJsonStringByObject(domainList);
 //                        //stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
@@ -115,8 +118,10 @@ public class FileReadImpl implements FileRead {
                 fr.close();
                 if (flag){
                     tempFile.renameTo(new File(tempFile.getPath()+".bak"));
+                    log.info( "{}  入库完成",tempFile.getName() );
+                } else {
+                    log.info( "{}  入库完成，入mysql有异常，重新录入",tempFile.getName());
                 }
-
             }
         }catch (Exception e){
             e.printStackTrace();
