@@ -54,10 +54,6 @@ mybatis:
 #    enabled: true
 #    names: basic
 
-
-
-
-
 #配置读取写入文件路径
 base:
   info:
@@ -68,6 +64,7 @@ redis-info:
     whileUrl: domain_whilt_url
     domainUrl: domain_url
     crawlerQueue: crawler_queue
+    analiseQueue: analise_queue
 
 job:
   param:

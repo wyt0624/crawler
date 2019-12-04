@@ -17,11 +17,15 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
 public class FileReadImpl implements FileRead {
+    public static Map<String,String> fileMap = new ConcurrentHashMap<String,String>(  );
     @Autowired
     BaseInfo baseInfo;
     @Autowired
@@ -30,7 +34,6 @@ public class FileReadImpl implements FileRead {
     UrlMapper urlMapper;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-
     /**
      * // 如入缓存， 入队列， 入mysql
      */
@@ -39,12 +42,13 @@ public class FileReadImpl implements FileRead {
         File[] files = file.listFiles(new FilenameFilter(){
             @Override
             public boolean accept(File dir, String name) {
-                return !name.endsWith(".bak");
+                return !name.endsWith(".bak") && !fileMap.containsKey( name );
             }
         });
         List<DomainUrl> listUrl = new ArrayList<DomainUrl>();
         try {
             for(File tempFile:files){
+                fileMap.put( file.getName(),"" );
                 log.info( "开始入库文件:{}" ,tempFile.getName() );
                 FileReader fr = new FileReader(tempFile.getPath());
                 BufferedReader bf = new BufferedReader(fr);
@@ -88,25 +92,15 @@ public class FileReadImpl implements FileRead {
                     listUrl.add( du );
                     if (listUrl.size() > 990) {
                         try {
-                            urlMapper.addDomainUrl(listUrl);
-                            log.info( "{} 入库 {} 条结果",tempFile.getName() , listUrl.size());
+                            urlMapper.addDomainUrl( listUrl );
+                            log.info( "{} 入库 {} 条结果", tempFile.getName(), listUrl.size() );
                         } catch (Exception e) {
                             e.printStackTrace();
                             flag = false;// 如果有出错 就需要重新 加载文件。。不能讲 文件改成.bak
                         }
                         listUrl.clear();
                     }
-//                    if(domainList.size()>=1000){
-//                        //String distSeg = GsonUtil.getJsonStringByObject(domainList);
-//                        //stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
-//                        stringRedisTemplate.opsForZSet()
-//
-//                        domainList.clear();
-//                    }
                 }
-//                String distSeg = GsonUtil.getJsonStringByObject(domainList);
-//                stringRedisTemplate.opsForList().rightPush(Param.REDIS_URL.getMsg(),distSeg);
-//                domainList.clear();
                 try {
                     urlMapper.addDomainUrl(listUrl);
                 } catch (Exception e) {
@@ -122,9 +116,11 @@ public class FileReadImpl implements FileRead {
                 } else {
                     log.info( "{}  入库完成，入mysql有异常，重新录入",tempFile.getName());
                 }
+                fileMap.remove( file.getName() );
             }
         }catch (Exception e){
             e.printStackTrace();
+
         }
     }
 }

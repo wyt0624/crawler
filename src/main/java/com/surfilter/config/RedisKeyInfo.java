@@ -11,4 +11,5 @@ public class RedisKeyInfo {
     private String whileUrl;
     private String domainUrl;
     private String crawlerQueue;
+    private String analiseQueue;
 }

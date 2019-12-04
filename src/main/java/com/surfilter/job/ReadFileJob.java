@@ -20,6 +20,12 @@ public class ReadFileJob {
     private void readFile() {
         //读取文件中的内容。并将文件放到redis中去重。然后插入数据库 然后插入队列。
         //读文件。
-        fileRead.doMainToRedis();
+        Thread thread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                fileRead.doMainToRedis();
+            }
+        } );
+        thread.start();
     }
 }

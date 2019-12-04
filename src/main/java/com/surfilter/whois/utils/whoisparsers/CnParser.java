@@ -48,7 +48,7 @@ public class CnParser extends AParser{
     private Pattern etimePattern = Pattern.compile(ETIMEREG);
     private Pattern emailPattern = Pattern.compile(EMAIL);
     private Pattern phonePattern = Pattern.compile(PHONE);
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'");
 
     @Override
     public WhoisModel parseWhois(String whoisResponse) {

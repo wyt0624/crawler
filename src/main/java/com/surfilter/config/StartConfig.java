@@ -3,6 +3,7 @@ package com.surfilter.config;
 import com.surfilter.consumer.Consumer;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.service.IWhiteListService;
+import com.surfilter.util.SslUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,11 @@ public class StartConfig {
 
     @PostConstruct
     public void init() {//将白名单放到 redis中。
+        try {
+            SslUtils.ignoreSsl();//忽略所有证书。
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initQqSet();
         //配置文件路径。如果没有目录则创建文件目录。
         initFile();
@@ -40,10 +46,8 @@ public class StartConfig {
     }
 
     private void initQqSet() {
-        qqset.add( "QQ客服" );
         qqset.add( "QQ" );
         qqset.add( "qq" );
-        qqset.add( "qq客服" );
     }
 
     private void initCrawling() {
