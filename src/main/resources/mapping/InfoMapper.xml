@@ -19,7 +19,7 @@
             wx,
             address,
             title
-        ) value (
+        ) values (
             #{url},
             #{isConn},
             #{port},
@@ -38,5 +38,48 @@
             #{title}
         )
     </insert>
+
+    <insert id="addListInfo" parameterType="java.util.List" useGeneratedKeys="true">
+        insert into info (
+            url,
+            is_conn,
+            port,
+            email,
+            tel,
+            creation_time,
+            expire_time,
+            company,
+            last_update_time,
+            file_name,
+            ip,
+            web_phone,
+            qq,
+            wx,
+            address,
+            title
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{url},
+            #{isConn},
+            #{port},
+            #{email},
+            #{tel},
+            #{creationTime},
+            #{expireTime},
+            #{company},
+            #{lastUpdateTime},
+            #{fileName},
+            #{ip},
+            #{webPhone},
+            #{qq},
+            #{wx},
+            #{address},
+            #{title}
+            )
+        </foreach>
+    </insert>
+
+
 
 </mapper>

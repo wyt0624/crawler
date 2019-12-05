@@ -4,8 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.nmap4j.core.nmap.NMapExecutionException;
+import org.nmap4j.core.nmap.NMapInitializationException;
 
-import java.util.HashSet;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -163,11 +167,64 @@ public class StringUtil {
         return null;
     }
 
-    public static void main(String[] args) {
-        String html = "qq客服awefaf540766024aawefal;jeifjiejij";
-        Set<String> qqset = new HashSet<>(  );
-        qqset.add( "QQ" );
-        qqset.add( "qq" );
-        System.out.println(qqRegEx(html,qqset));
+    public static void main(String[] args) throws NMapExecutionException, NMapInitializationException {
+      //  WhoisModel wm = WhoisUtil.queryWhois( "baidu.com" );
+        String ip = "";
+        try{
+//            InetAddress[] inetAdresses = InetAddress.getAllByName("baidu.com");
+//            if(inetAdresses != null && inetAdresses.length > 0){
+//                ip = inetAdresses[0].getHostAddress();
+//            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        System.out.println(ip);
+    }
+
+
+    /**
+     * 调用nmap进行扫描
+     * @param nmapDir nmap路径
+     * @param command 执行命令
+     *
+     * @return 执行回显
+     * */
+    public static  String getReturnData(String nmapDir,String command){
+        Process process = null;
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            process = Runtime.getRuntime().exec(nmapDir + " " + command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
+            String line = null;
+            while((line = reader.readLine()) != null){
+                stringBuffer.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuffer.toString();
+    }
+    public static  long getIpNum (String ip) {
+        long ipnum = 0;
+        try {
+            String[] ips = ip.split( "\\." );
+            for ( int i = 0 ; i<ips.length; i++ ) {
+                if (i == 0) {
+                    ipnum +=  Long.parseLong( ips[0] ) * 255 * 255 * 255;
+                }
+                if (i == 1) {
+                    ipnum +=  Long.parseLong( ips[1] ) * 255 * 255;
+                }
+                if (i == 2) {
+                    ipnum +=  Long.parseLong( ips[2] ) * 255;
+                }
+                if (i == 3) {
+                    ipnum +=  Long.parseLong( ips[3] );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ipnum;
     }
 }

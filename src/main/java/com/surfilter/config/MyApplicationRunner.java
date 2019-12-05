@@ -1,4 +1,4 @@
-package com.surfilter;
+package com.surfilter.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

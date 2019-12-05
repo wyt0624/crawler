@@ -12,4 +12,5 @@ public class RedisKeyInfo {
     private String domainUrl;
     private String crawlerQueue;
     private String analiseQueue;
+    private String fidelityIp;
 }

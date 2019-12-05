@@ -171,8 +171,6 @@ public class WhoisUtil implements Serializable{
 //            }
             whoisClient.connect(curDoaminServer);
             String result = whoisClient.query(host);
-            System.out.println(result);
-           // whoisModel = WhoisParserFactory.getInstance().getParser(curDoaminServer).parseWhois(result);
             whoisModel = WhoisParserFactory.getInstance().getParser().parseWhois(result);
         }catch(Exception ex){
             ex.printStackTrace();

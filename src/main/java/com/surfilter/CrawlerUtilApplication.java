@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableScheduling
 @MapperScan("com.surfilter.dao")
 public class CrawlerUtilApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CrawlerUtilApplication.class, args);
     }

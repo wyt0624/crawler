@@ -1,7 +1,7 @@
 package com.surfilter.config;
 
-import com.surfilter.consumer.Consumer;
 import com.surfilter.entity.WhiteUrl;
+import com.surfilter.service.IIpService;
 import com.surfilter.service.IWhiteListService;
 import com.surfilter.util.SslUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -29,21 +29,29 @@ public class StartConfig {
     RedisKeyInfo redisKeyInfo;
     @Autowired
     BaseInfo baseInfo;
+    @Autowired
+    IIpService ipService;
+    private  static boolean isOSLinux;
 
     @PostConstruct
     public void init() {//将白名单放到 redis中。
+        isOSLinux =  isOSLinux();
         try {
             SslUtils.ignoreSsl();//忽略所有证书。
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         initQqSet();
         //配置文件路径。如果没有目录则创建文件目录。
         initFile();
         //加载白名单。
         initWhite();
         initCrawling();//初始化爬虫消费则。
+       // initIp();
     }
+
+
 
     private void initQqSet() {
         qqset.add( "QQ" );
@@ -51,8 +59,25 @@ public class StartConfig {
     }
 
     private void initCrawling() {
-        Thread thread = new Thread( new Consumer());
-        thread.start();
+//        Thread thread = new Thread( new Runnable() {
+//            @Override
+//            public void run() {
+//                consumer.init();
+//            }
+//        } );
+//        thread.start();
+    }
+
+
+    public static  boolean isOSLinux() {
+        Properties prop = System.getProperties();
+
+        String os = prop.getProperty("os.name");
+        if (os != null && os.toLowerCase().indexOf("linux") > -1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void initWhite() {
@@ -77,7 +102,6 @@ public class StartConfig {
         data.clear();
         log.info( "加载白名单信息成功" );
     }
-
     private void initFile() {
         File file = new File(baseInfo.getUrlReadPath());
         if (!file.isDirectory()) {
@@ -88,7 +112,6 @@ public class StartConfig {
             file1.mkdirs();
         }
     }
-
     public Set<String> getQqset() {
         return qqset;
     }

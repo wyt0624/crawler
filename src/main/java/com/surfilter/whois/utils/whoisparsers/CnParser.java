@@ -59,7 +59,6 @@ public class CnParser extends AParser{
             whoisModel.setIp( IpUtil.getIpByDomain(domain));
             String ctime = getFieldValue(getMatchField(ctimePattern, whoisResponse), ":");
             whoisModel.setCtime(simpleDateFormat.parse(ctime).getTime());
-
             String utime = getFieldValue(getMatchField(utimePattern, whoisResponse), ":");
             whoisModel.setUtime(simpleDateFormat.parse(utime).getTime());
             String etime = getFieldValue(getMatchField(etimePattern,whoisResponse),":");

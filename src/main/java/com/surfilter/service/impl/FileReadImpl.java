@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class FileReadImpl implements FileRead {
-    public static Map<String,String> fileMap = new ConcurrentHashMap<String,String>(  );
     @Autowired
     BaseInfo baseInfo;
     @Autowired
@@ -42,13 +41,13 @@ public class FileReadImpl implements FileRead {
         File[] files = file.listFiles(new FilenameFilter(){
             @Override
             public boolean accept(File dir, String name) {
-                return !name.endsWith(".bak") && !fileMap.containsKey( name );
+                return !name.endsWith(".bak");
             }
         });
         List<DomainUrl> listUrl = new ArrayList<DomainUrl>();
         try {
             for(File tempFile:files){
-                fileMap.put( file.getName(),"" );
+
                 log.info( "开始入库文件:{}" ,tempFile.getName() );
                 FileReader fr = new FileReader(tempFile.getPath());
                 BufferedReader bf = new BufferedReader(fr);
@@ -75,7 +74,8 @@ public class FileReadImpl implements FileRead {
                             e.printStackTrace();
                         }
                         try {// 是否已经发送爬取数据的队列。  如果已经发送了就 直接修改为1 如果发送失败了就改为2
-                            stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),str);
+                            //stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),str);
+                            stringRedisTemplate.convertAndSend( redisKeyInfo.getCrawlerQueue(),str);
                             crawlingStatus = 1;
                         } catch (Exception e){
                             crawlingStatus = 2;
@@ -116,7 +116,6 @@ public class FileReadImpl implements FileRead {
                 } else {
                     log.info( "{}  入库完成，入mysql有异常，重新录入",tempFile.getName());
                 }
-                fileMap.remove( file.getName() );
             }
         }catch (Exception e){
             e.printStackTrace();

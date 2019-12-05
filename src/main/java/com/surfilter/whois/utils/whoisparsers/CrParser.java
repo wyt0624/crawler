@@ -1,7 +1,6 @@
 package com.surfilter.whois.utils.whoisparsers;
 
 import com.surfilter.whois.models.WhoisModel;
-import com.surfilter.whois.utils.IpUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
@@ -72,24 +71,39 @@ public class CrParser extends AParser{
     private Pattern emailPattern = Pattern.compile(EMAIL);
     private Pattern phonePattern = Pattern.compile(PHONE);
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private SimpleDateFormat simpleDateFormatZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public WhoisModel parseWhois(String whoisResponse) {
         WhoisModel whoisModel = new WhoisModel();
         try {
             String domain = getFieldValue(getMatchField(domainPattern, whoisResponse), ":");
             whoisModel.setDomain(domain);
-            whoisModel.setIp( IpUtil.getIpByDomain(domain));
+            //whoisModel.setIp( IpUtil.getIpByDomain(domain));
             String ctime = getFieldValue(getMatchField(ctimePattern, whoisResponse), ":");
-            whoisModel.setCtime(simpleDateFormat.parse(ctime).getTime());
+            if (ctime.endsWith( "'Z'" )) {
+                whoisModel.setCtime(simpleDateFormatZ.parse(ctime).getTime());
+            } else {
+                whoisModel.setCtime(simpleDateFormat.parse(ctime).getTime());
+            }
             String utime = getFieldValue(getMatchField(utimePattern, whoisResponse), ":");
-            whoisModel.setUtime(simpleDateFormat.parse(utime).getTime());
+            if (ctime.endsWith( "'Z'" )) {
+                whoisModel.setUtime(simpleDateFormatZ.parse(utime).getTime());
+            } else {
+                whoisModel.setUtime(simpleDateFormat.parse(utime).getTime());
+            }
             String etime = getFieldValue(getMatchField(etimePattern,whoisResponse),":");
-            whoisModel.setEtime(simpleDateFormat.parse(etime).getTime());
+            if (ctime.endsWith( "'Z'" )) {
+                whoisModel.setEtime(simpleDateFormatZ.parse(etime).getTime());
+            } else {
+                whoisModel.setEtime(simpleDateFormat.parse(etime).getTime());
+            }
             String email = getFieldValue(getMatchField(emailPattern, whoisResponse), ":");
             whoisModel.setEmail(email);
             String phone = getFieldValue(getMatchField(phonePattern, whoisResponse), ":");
             whoisModel.setPhone(phone);
+
+
         }catch(Exception ex){
             ex.printStackTrace();
         }

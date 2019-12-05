@@ -1,9 +1,9 @@
 package com.surfilter.util;
+import com.surfilter.config.StartConfig;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +13,9 @@ public class Ping {
         BufferedReader in = null;
         Runtime r = Runtime.getRuntime();  // 将要执行的ping命令,此命令是windows格式的命令
         String pingCommand = "ping " + ipAddress + " -n " + pingTimes    + " -w " + timeOut;
+        if (StartConfig.isOSLinux()) {
+            pingCommand = "ping " + ipAddress + " -c " + pingTimes    + " -w " + timeOut;
+        }
         try {   // 执行命令并获取输出
             System.out.println(pingCommand);
             Process p = r.exec(pingCommand);

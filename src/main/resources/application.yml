@@ -65,7 +65,9 @@ redis-info:
     domainUrl: domain_url
     crawlerQueue: crawler_queue
     analiseQueue: analise_queue
+    fidelityIp: fidelity_ip
 
 job:
   param:
     readFile: 0/5 * * * * ?
+    fiedlityJob: 0 0 0 * * ?
