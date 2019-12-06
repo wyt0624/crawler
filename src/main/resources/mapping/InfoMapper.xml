@@ -60,22 +60,22 @@
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{url},
-            #{isConn},
-            #{port},
-            #{email},
-            #{tel},
-            #{creationTime},
-            #{expireTime},
-            #{company},
-            #{lastUpdateTime},
-            #{fileName},
-            #{ip},
-            #{webPhone},
-            #{qq},
-            #{wx},
-            #{address},
-            #{title}
+            #{item.url},
+            #{item.isConn},
+            #{item.port},
+            #{item.email},
+            #{item.tel},
+            #{item.creationTime},
+            #{item.expireTime},
+            #{item.company},
+            #{item.lastUpdateTime},
+            #{item.fileName},
+            #{item.ip},
+            #{item.webPhone},
+            #{item.qq},
+            #{item.wx},
+            #{item.address},
+            #{item.title}
             )
         </foreach>
     </insert>

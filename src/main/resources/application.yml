@@ -1,5 +1,5 @@
 server:
-  port: 8070
+  port: 8082
   tomcat:
     uri-encoding: UTF-8
 spring:
@@ -69,5 +69,4 @@ redis-info:
 
 job:
   param:
-    readFile: 0/5 * * * * ?
     fiedlityJob: 0 0 0 * * ?

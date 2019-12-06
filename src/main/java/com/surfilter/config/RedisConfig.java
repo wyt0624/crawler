@@ -3,7 +3,6 @@ package com.surfilter.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.surfilter.consumer.RedisReceiver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -11,9 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -43,31 +39,31 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.afterPropertiesSet();
         return template;
     }
-    @Bean
-    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,  MessageListenerAdapter listenerAdapter) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-
-        //可以添加多个 messageListener
-        container.addMessageListener(listenerAdapter, new PatternTopic(redisKeyInfo.getCrawlerQueue()));
-        log.info( "消费者开始接受任务，订阅key:{}", redisKeyInfo.getCrawlerQueue());
-        return container;
-    }
+//    @Bean
+//    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,  MessageListenerAdapter listenerAdapter) {
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//
+//        //可以添加多个 messageListener
+//        container.addMessageListener(listenerAdapter, new PatternTopic(redisKeyInfo.getCrawlerQueue()));
+//        log.info( "消费者开始接受任务，订阅key:{}", redisKeyInfo.getCrawlerQueue());
+//        return container;
+//    }
     /**
      * 消息监听器适配器，绑定消息处理器，利用反射技术调用消息处理器的业务方法
      * @param redisReceiver
      * @return
      */
-    @Bean
-    MessageListenerAdapter listenerAdapter(RedisReceiver redisReceiver) {
-        log.info("初始化消费者监听适配器");
-        return new MessageListenerAdapter(redisReceiver, "receiveMessage");
-    }
-    //使用默认的工厂初始化redis操作模板
-    @Bean
-    StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
-    }
+//    @Bean
+//    MessageListenerAdapter listenerAdapter(RedisReceiver redisReceiver) {
+//        log.info("初始化消费者监听适配器");
+//        return new MessageListenerAdapter(redisReceiver, "receiveMessage");
+//    }
+//    //使用默认的工厂初始化redis操作模板
+//    @Bean
+//    StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
+//        return new StringRedisTemplate(connectionFactory);
+//    }
 
 
     /**

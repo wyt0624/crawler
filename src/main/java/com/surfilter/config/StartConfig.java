@@ -1,5 +1,7 @@
 package com.surfilter.config;
 
+import com.surfilter.consumer.RedisReceiver;
+import com.surfilter.entity.Ip;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.service.IIpService;
 import com.surfilter.service.IWhiteListService;
@@ -7,11 +9,14 @@ import com.surfilter.util.SslUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 初始化类
@@ -20,6 +25,8 @@ import java.util.*;
 @Configuration
 @Slf4j
 public class StartConfig {
+
+    public static AtomicInteger atomicInteger = new AtomicInteger(0);
     Set<String> qqset = new HashSet<>();
     @Autowired
     IWhiteListService whiteListService;
@@ -31,6 +38,8 @@ public class StartConfig {
     BaseInfo baseInfo;
     @Autowired
     IIpService ipService;
+    @Autowired
+    RedisReceiver redisReceiver;
     private  static boolean isOSLinux;
 
     @PostConstruct
@@ -48,10 +57,35 @@ public class StartConfig {
         //加载白名单。
         initWhite();
         initCrawling();//初始化爬虫消费则。
-       // initIp();
+        //initIp();
     }
 
-
+    private void initIp() {
+        log.info( "开始加载村真ip到redis" );
+        int count = 0;
+        for (;;) {
+            List<Ip> list = ipService.listIps(count);
+            if (list.size()> 0){
+                Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
+                for (Ip ip:list){
+                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>(ip.getAddress() +
+                            "_" + ip.getSpecificAddress() +"," + ip.getEndIpNum(), (double)ip.getEndIpNum());
+                    tuples.add( tuple );
+                }
+                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp() ,tuples);
+                tuples.clear();
+                tuples = null;
+            }
+            if (list.size()< 10000) {
+                count += list.size();
+                log.info( "存真ip入库成功，总条数：{}",count);
+                break;
+            } else {
+                log.info( "存真ip入库成功入缓存，数量：{}",count);
+                count += 10000;
+            }
+        }
+    }
 
     private void initQqSet() {
         qqset.add( "QQ" );
@@ -59,13 +93,13 @@ public class StartConfig {
     }
 
     private void initCrawling() {
-//        Thread thread = new Thread( new Runnable() {
-//            @Override
-//            public void run() {
-//                consumer.init();
-//            }
-//        } );
-//        thread.start();
+        Thread thread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                redisReceiver.init();
+            }
+        } );
+        thread.start();
     }
 
 

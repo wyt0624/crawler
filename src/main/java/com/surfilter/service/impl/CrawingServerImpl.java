@@ -48,6 +48,10 @@ public class CrawingServerImpl implements ICrawingService{
         List<Info> listInfo = new ArrayList<>(  );
         List<AnaliseInfo> listAnaliseInfo = new ArrayList<>(  );
         for (String url : list) {
+            boolean white = stringRedisTemplate.opsForHash().hasKey( redisKeyInfo.getWhileUrl(), url );
+            if (white) {
+                continue;
+            }
             Info info = new Info();
             Document doc = null;
             String title = "";
@@ -137,6 +141,7 @@ public class CrawingServerImpl implements ICrawingService{
         }
         if (listInfo.size() > 0) {
             infoMapper.addListInfo( listInfo );
+
         }
         listInfo.clear();
         if (listAnaliseInfo.size() > 0) {
@@ -144,5 +149,6 @@ public class CrawingServerImpl implements ICrawingService{
             stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(),json );
         }
         listAnaliseInfo.clear();
+        StartConfig.atomicInteger.decrementAndGet();
     }
 }

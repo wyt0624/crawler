@@ -1,5 +1,6 @@
 package com.surfilter.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.surfilter.config.BaseInfo;
 import com.surfilter.config.RedisKeyInfo;
 import com.surfilter.dao.UrlMapper;
@@ -17,11 +18,9 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("ALL")
 @Service
 @Slf4j
 public class FileReadImpl implements FileRead {
@@ -47,7 +46,6 @@ public class FileReadImpl implements FileRead {
         List<DomainUrl> listUrl = new ArrayList<DomainUrl>();
         try {
             for(File tempFile:files){
-
                 log.info( "开始入库文件:{}" ,tempFile.getName() );
                 FileReader fr = new FileReader(tempFile.getPath());
                 BufferedReader bf = new BufferedReader(fr);
@@ -57,8 +55,10 @@ public class FileReadImpl implements FileRead {
                 int  cacheStatus = 0;
                 int  crawlingStatus = 0;
                 boolean flag = true;
+                List<String> list  = new ArrayList<>(  );
                 while ((str = bf.readLine()) != null) {
-                    if (StringUtils.isEmpty(str)) { //如果是空直接越过。
+                    if (StringUtils.isEmpty(str) || !str.contains( "." ) || str.length() < 3 || str.startsWith( "-" )
+                           || str.endsWith( "*" ) || str.length() > 498) { //如果是空直接越过。
                         continue;
                     }
                     str = str.replace("\"","").trim();
@@ -74,8 +74,7 @@ public class FileReadImpl implements FileRead {
                             e.printStackTrace();
                         }
                         try {// 是否已经发送爬取数据的队列。  如果已经发送了就 直接修改为1 如果发送失败了就改为2
-                            //stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),str);
-                            stringRedisTemplate.convertAndSend( redisKeyInfo.getCrawlerQueue(),str);
+                            list.add( str );
                             crawlingStatus = 1;
                         } catch (Exception e){
                             crawlingStatus = 2;
@@ -90,10 +89,16 @@ public class FileReadImpl implements FileRead {
                     du.setOperateTime( new Timestamp( System.currentTimeMillis() ));
                     du.setUrl( str );
                     listUrl.add( du );
-                    if (listUrl.size() > 990) {
+                    count ++;
+                    if (listUrl.size() > 200) {
                         try {
-                            urlMapper.addDomainUrl( listUrl );
-                            log.info( "{} 入库 {} 条结果", tempFile.getName(), listUrl.size() );
+                            String json = JSON.toJSONString(list);
+                            stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),json);
+                            if (listUrl.size() > 0) {
+                                urlMapper.addDomainUrl( listUrl );
+                            }
+                            list.clear();
+                            log.info( "{} 入库 {} 条结果", tempFile.getName(),count );
                         } catch (Exception e) {
                             e.printStackTrace();
                             flag = false;// 如果有出错 就需要重新 加载文件。。不能讲 文件改成.bak
@@ -102,7 +107,11 @@ public class FileReadImpl implements FileRead {
                     }
                 }
                 try {
-                    urlMapper.addDomainUrl(listUrl);
+                    String json = JSON.toJSONString(list);
+                    stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),json);
+                    if (listUrl.size() > 0) {
+                        urlMapper.addDomainUrl( listUrl );
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     flag = false;// 如果有出错 就需要重新 加载文件。。不能讲 文件改成.bak
@@ -112,7 +121,7 @@ public class FileReadImpl implements FileRead {
                 fr.close();
                 if (flag){
                     tempFile.renameTo(new File(tempFile.getPath()+".bak"));
-                    log.info( "{}  入库完成",tempFile.getName() );
+                    log.info( "{}  入库完成，总结果{}",tempFile.getName() ,count);
                 } else {
                     log.info( "{}  入库完成，入mysql有异常，重新录入",tempFile.getName());
                 }

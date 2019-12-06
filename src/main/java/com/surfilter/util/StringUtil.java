@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,19 +170,23 @@ public class StringUtil {
 
     public static void main(String[] args) throws NMapExecutionException, NMapInitializationException {
       //  WhoisModel wm = WhoisUtil.queryWhois( "baidu.com" );
-        String ip = "";
-        try{
-//            InetAddress[] inetAdresses = InetAddress.getAllByName("baidu.com");
-//            if(inetAdresses != null && inetAdresses.length > 0){
-//                ip = inetAdresses[0].getHostAddress();
-//            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-        System.out.println(ip);
+//        String ip = "";
+//        try{
+////            InetAddress[] inetAdresses = InetAddress.getAllByName("baidu.com");
+////            if(inetAdresses != null && inetAdresses.length > 0){
+////                ip = inetAdresses[0].getHostAddress();
+////            }
+//        }catch(Exception ex){
+//            ex.printStackTrace();
+//        }
+//        System.out.println(ip);
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        System.out.println(atomicInteger.get());
+        atomicInteger.incrementAndGet();
+        System.out.println(atomicInteger.get());
+        atomicInteger.decrementAndGet();
+        System.out.println(atomicInteger.get());
     }
-
-
     /**
      * 调用nmap进行扫描
      * @param nmapDir nmap路径
