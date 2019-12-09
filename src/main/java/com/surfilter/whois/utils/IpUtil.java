@@ -18,4 +18,7 @@ public class IpUtil implements Serializable{
         }
         return ip;
     }
+    public static void main(String[] args) {
+        
+    }
 }

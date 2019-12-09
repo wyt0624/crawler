@@ -2,6 +2,7 @@ package com.surfilter.job;
 
 import com.surfilter.config.BaseInfo;
 import com.surfilter.config.RedisKeyInfo;
+import com.surfilter.content.Globle;
 import com.surfilter.entity.Ip;
 import com.surfilter.service.IIpService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ public class FiedlityJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.fiedlityJob}")
     private void initIp() {
+        if (baseInfo.getSysSole().equals( Globle.SYS_ROLE_CONSUMER)) {
+            return;
+        }
         log.info( "开始加载村真ip到redis" );
         int count = 0;
         for (;;) {
@@ -37,7 +41,7 @@ public class FiedlityJob {
                 Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
                 for (Ip ip:list){
                     ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>(ip.getAddress() +
-                            "_" + ip.getSpecificAddress() +"," + ip.getEndIpNum(), (double)ip.getEndIpNum());
+                            "_" + ip.getSpecificAddress(), (double)ip.getEndIpNum());
                     tuples.add( tuple );
                 }
                 stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp() ,tuples);

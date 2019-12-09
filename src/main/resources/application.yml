@@ -55,10 +55,11 @@ mybatis:
 #    names: basic
 
 #配置读取写入文件路径
+
 base:
   info:
     urlReadPath: D:/data/url_data/
-    urlSnapshot: D:/data/word_data/
+    sysSole: consumer    #consumer  生产者，提供定时程序，读取文件，读取域名文件。定时白名单 。 consumer 生产者， 为用户提供爬虫逻辑。
 redis-info:
   key:
     whileUrl: domain_whilt_url
@@ -66,7 +67,11 @@ redis-info:
     crawlerQueue: crawler_queue
     analiseQueue: analise_queue
     fidelityIp: fidelity_ip
+    crawlerCache: crawler_cache
 
 job:
   param:
     fiedlityJob: 0 0 0 * * ?
+    #crawlerJob: 0/25 * * * * ?
+    crawlerJob: 0 0 0 * * ?
+    domainUrlJob: 0 0/10 * * * ?

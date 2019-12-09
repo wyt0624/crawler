@@ -19,9 +19,9 @@ public class ThreadPool {
         // 设置最大线程数
         executor.setMaxPoolSize(180);
         // 设置队列容量
-        executor.setQueueCapacity(300);
+        // executor.setQueueCapacity(150);
         // 设置线程活跃时间（秒）
-        executor.setKeepAliveSeconds(50);
+        executor.setKeepAliveSeconds(5000);
         // 设置默认线程名称
         executor.setThreadNamePrefix("thead-pool");
         // 设置拒绝策略

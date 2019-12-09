@@ -90,7 +90,7 @@ public class FileReadImpl implements FileRead {
                     du.setUrl( str );
                     listUrl.add( du );
                     count ++;
-                    if (listUrl.size() > 200) {
+                    if (listUrl.size() > 50) {
                         try {
                             String json = JSON.toJSONString(list);
                             stringRedisTemplate.opsForList().rightPush(redisKeyInfo.getCrawlerQueue(),json);

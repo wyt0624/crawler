@@ -1,6 +1,7 @@
 package com.surfilter.config;
 
 import com.surfilter.consumer.RedisReceiver;
+import com.surfilter.content.Globle;
 import com.surfilter.entity.Ip;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.service.IIpService;
@@ -44,20 +45,23 @@ public class StartConfig {
 
     @PostConstruct
     public void init() {//将白名单放到 redis中。
+        if (baseInfo.getSysSole().equals( Globle.SYS_ROLE_PROVIDER )) {
+            return;
+        }
+
         isOSLinux =  isOSLinux();
         try {
             SslUtils.ignoreSsl();//忽略所有证书。
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         initQqSet();
         //配置文件路径。如果没有目录则创建文件目录。
         initFile();
         //加载白名单。
         initWhite();
         initCrawling();//初始化爬虫消费则。
-        //initIp();
+       // initIp();
     }
 
     private void initIp() {
@@ -69,7 +73,7 @@ public class StartConfig {
                 Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
                 for (Ip ip:list){
                     ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>(ip.getAddress() +
-                            "_" + ip.getSpecificAddress() +"," + ip.getEndIpNum(), (double)ip.getEndIpNum());
+                            "_" + ip.getSpecificAddress(), (double)ip.getEndIpNum());
                     tuples.add( tuple );
                 }
                 stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp() ,tuples);
@@ -140,10 +144,6 @@ public class StartConfig {
         File file = new File(baseInfo.getUrlReadPath());
         if (!file.isDirectory()) {
             file.mkdirs();
-        }
-        File file1 = new File( baseInfo.getUrlSnapshot() );
-        if(file1.isDirectory()) {
-            file1.mkdirs();
         }
     }
     public Set<String> getQqset() {

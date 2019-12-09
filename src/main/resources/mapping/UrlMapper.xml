@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.surfilter.dao.UrlMapper">
-
-
     <insert id="addDomainUrl" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="id">
         insert into domain_url (url,operate_time,cache_status,crawling_status)
         values
@@ -10,4 +8,39 @@
             (#{item.url},#{item.operateTime},#{item.crawlingStatus},#{item.cacheStatus})
         </foreach>
     </insert>
+
+    <update id="updateListCrawlerStatus" >
+        update  domain_url set crawling_status = 2
+            <where>
+                url not in  (
+                  select url from info
+                )
+            </where>
+    </update>
+
+    <select id="listCrawler"  resultType="domainUrl" >
+        select id,url from domain_url where crawling_status = 2  limit 50
+    </select>
+    <update id="updateListCrawler"  parameterType="java.util.List">
+      update  domain_url  set crawling_status = 1
+      <where>
+          id
+          <foreach collection="list" separator="," item="item" index="index"  open=" in (" close=")">
+              #{item.id}
+          </foreach>
+      </where>
+    </update>
+    <select id="listCache"  resultType="domainUrl" >
+        select id,url from domain_url where cache_status = 2   limit 50
+    </select>
+    <update id="updateListCache"  parameterType="java.util.List">
+        update  domain_url  set cache_status = 1
+        <where>
+            id
+            <foreach collection="list" separator="," item="item" index="index"  open=" in (" close=")">
+                #{item.id}
+            </foreach>
+        </where>
+    </update>
+
 </mapper>

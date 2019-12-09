@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "base.info")
 public class BaseInfo {
     private String urlReadPath; //url读取目录
-    private String urlSnapshot; //快照保存目录。
+   // private String urlSnapshot; //快照保存目录。
+    private String sysSole;
 
 }

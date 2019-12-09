@@ -27,6 +27,11 @@ public class RedisReceiver {
     List<String> list = new ArrayList<String>();
 
     public void init () {
+        try {
+            Thread.sleep( 8000 );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (stringRedisTemplate == null) {
             stringRedisTemplate = BeanContext.getApplicationContext().getBean(StringRedisTemplate.class);
         }
@@ -36,35 +41,45 @@ public class RedisReceiver {
         if (crawingService == null) {
             crawingService = BeanContext.getApplicationContext().getBean(CrawingServerImpl.class);
         }
+        stringRedisTemplate.delete(  redisKeyInfo.getCrawlerCache() );
         log.info( "消费者初始化成功" );
         for(;; ) {
-            if (  StartConfig.atomicInteger.get() > 150 ) {
-                try {
-                    Thread.sleep( 10000 );
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                continue;
-            }
-            StartConfig.atomicInteger.incrementAndGet();
-
-            String  message = "";
             try {
-                message = stringRedisTemplate.opsForList().leftPop( redisKeyInfo.getCrawlerQueue() );
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (StringUtils.isNotBlank( message )) {
-                List<String> list= JSONArray.parseArray(message,String.class);
-                if (list.size()>0) {
-                    crawingService.crawingUrl( list );
+                log.info( String.valueOf( StartConfig.atomicInteger.get() ) );
+                if (StartConfig.atomicInteger.get() > 150) {
+                    try {
+                        Thread.sleep( 10000 );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
                 }
-            } else {
+                StartConfig.atomicInteger.incrementAndGet();
+
+                String message = "";
                 try {
-                    Thread.sleep( 10000 );
-                } catch (InterruptedException e) {
+                    message = stringRedisTemplate.opsForList().leftPop( redisKeyInfo.getCrawlerQueue() );
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+                if (StringUtils.isNotBlank( message )) {
+                    List<String> list = JSONArray.parseArray( message, String.class );
+                    if (list.size() > 0) {
+                        String[] strings = new String[list.size()];
+                        list.toArray(strings);
+                        stringRedisTemplate.opsForSet().add( redisKeyInfo.getCrawlerCache(), strings );
+                        strings = null;
+                        crawingService.crawingUrl( list );
+                    }
+                } else {
+                    try {
+                        Thread.sleep( 10000 );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
     }

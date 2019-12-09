@@ -10,8 +10,9 @@ import org.nmap4j.core.nmap.NMapInitializationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -180,12 +181,28 @@ public class StringUtil {
 //            ex.printStackTrace();
 //        }
 //        System.out.println(ip);
-        AtomicInteger atomicInteger = new AtomicInteger(0);
-        System.out.println(atomicInteger.get());
-        atomicInteger.incrementAndGet();
-        System.out.println(atomicInteger.get());
-        atomicInteger.decrementAndGet();
-        System.out.println(atomicInteger.get());
+//        AtomicInteger atomicInteger = new AtomicInteger(0);
+//        System.out.println(atomicInteger.get());
+//        atomicInteger.incrementAndGet();
+//        System.out.println(atomicInteger.get());
+//        atomicInteger.decrementAndGet();
+//        System.out.println(atomicInteger.get());
+//        System.out.println(getIpNum("124.156.98.105"));
+          List<String > list = new ArrayList<String>();
+          list.add("aaa");
+          list.add("bbb");
+          list.add("ccc");
+          list.add("ccc");
+          list.add("ccc");
+          list.add("ccc");
+          list.add("ccc");
+        String[] strings = new String[list.size()];
+        list.toArray(strings);
+
+
+
+
+          getChangeCan("test",strings);
     }
     /**
      * 调用nmap进行扫描
@@ -231,5 +248,13 @@ public class StringUtil {
             e.printStackTrace();
         }
         return ipnum;
+    }
+
+
+    public static void  getChangeCan(String aa,Object... var2){
+        System.out.println(var2);
+        for (Object aaa :var2) {
+            System.out.println(aaa);
+        }
     }
 }
