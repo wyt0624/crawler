@@ -1,5 +1,6 @@
 package com.surfilter.util;
 
+import com.surfilter.entity.Info;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,9 +11,11 @@ import org.nmap4j.core.nmap.NMapInitializationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +41,38 @@ public class StringUtil {
         }
         return new String(sb);
     }
+    public static  String RemoveSymbolNumStr(String str) throws  Exception{
+        String regEx="[a-zA-Z0-9]";
+        Pattern p   =   Pattern.compile(regEx);
+        Matcher m   =   p.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()){
+            sb.append(m.group());
+        }
+        return new String(sb);
+    }
+    /**
+     * 去掉字符串中的特殊字符，只保留数字，中文，英文
+     * 提取中文：regEx=“[\\u4e00-\\u9fa5]";
+     * 提取数字：regEx=“[0-9]";
+     * 提取英文：regEx=“[a-zA-Z0-9]";
+     * 提取英文和数字：regEx=“[a-zA-Z0-9]";
+     * @param str
+     * @return
+     * @throws Exception
+     */
+    public static  String RemoveSymbolNum(String str) throws  Exception{
+        String regEx="[0-9]";
+        Pattern p   =   Pattern.compile(regEx);
+        Matcher m   =   p.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()){
+            sb.append(m.group());
+        }
+        return new String(sb);
+    }
+
+
     public static  String RemoveSymbolCh(String str) {
         String regEx="[\\u4e00-\\u9fa5]";
         Pattern p   =   Pattern.compile(regEx);
@@ -169,41 +204,30 @@ public class StringUtil {
         return null;
     }
 
-    public static void main(String[] args) throws NMapExecutionException, NMapInitializationException {
-      //  WhoisModel wm = WhoisUtil.queryWhois( "baidu.com" );
-//        String ip = "";
-//        try{
-////            InetAddress[] inetAdresses = InetAddress.getAllByName("baidu.com");
-////            if(inetAdresses != null && inetAdresses.length > 0){
-////                ip = inetAdresses[0].getHostAddress();
-////            }
-//        }catch(Exception ex){
-//            ex.printStackTrace();
-//        }
-//        System.out.println(ip);
-//        AtomicInteger atomicInteger = new AtomicInteger(0);
-//        System.out.println(atomicInteger.get());
-//        atomicInteger.incrementAndGet();
-//        System.out.println(atomicInteger.get());
-//        atomicInteger.decrementAndGet();
-//        System.out.println(atomicInteger.get());
-//        System.out.println(getIpNum("124.156.98.105"));
-          List<String > list = new ArrayList<String>();
-          list.add("aaa");
-          list.add("bbb");
-          list.add("ccc");
-          list.add("ccc");
-          list.add("ccc");
-          list.add("ccc");
-          list.add("ccc");
-        String[] strings = new String[list.size()];
-        list.toArray(strings);
-
-
-
-
-          getChangeCan("test",strings);
+    /**
+     * 判断字符串中是否包含 除了 英文 数字 和. 之外的字符。
+     * @param str
+     * @return
+     */
+    public static boolean RemoveSymbolnomal(String str) {
+        String regEx="[a-zA-Z0-9.]";
+        Pattern p   =   Pattern.compile(regEx);
+        Matcher m   =   p.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()) {
+            sb.append( m.group() );
+        }
+        String ss =  new String(sb);
+        boolean flag = true;
+        if (ss.length() == str.length()) {
+            flag =  true;
+        } else {
+            flag = false;
+        }
+        ss = null;
+        return flag;
     }
+
     /**
      * 调用nmap进行扫描
      * @param nmapDir nmap路径
@@ -226,7 +250,7 @@ public class StringUtil {
         }
         return stringBuffer.toString();
     }
-    public static  long getIpNum (String ip) {
+    public static  Long  getIpNum (String ip) {
         long ipnum = 0;
         try {
             String[] ips = ip.split( "\\." );
@@ -257,4 +281,194 @@ public class StringUtil {
             System.out.println(aaa);
         }
     }
+
+    public static boolean domainClean(String str) {
+        if (StringUtils.isEmpty( str )) {
+            return false;
+        }
+        if (str.length() <3 || str.length() >400) {
+            return false;
+        }
+        if (str.endsWith( "*" )) {
+            return false;
+        }
+        if (str.startsWith( "-" )) {
+            return false;
+        }
+        return true;
+
+    }
+    //符合数据规范的 在入队列。
+    public static void domainExClean(String url, Info info) {
+        StringBuffer rule = new StringBuffer( "" );
+        int count = 0;
+        // 域名长度在5 - 20
+        if(url.length() > 4 && url.length() <= 20) {
+            count ++;
+            rule.append( "1," );
+        }
+        //  . 出现在1 - 4 之间。
+        int num  = getMaches(url,".");
+        if (num > 0 && num <4) {
+            count ++;
+            rule.append( "2," );
+        }
+        //域名中特殊字符频率中。黄色网站及域名网站没有变化。故 count+1
+        count ++;
+        rule.append( "3," );
+        // 数字 占域名总长度。 0 - 0.8 之间。
+        double digit_length_percent = digitLengthPercent(url);
+        if (digit_length_percent >=0  && digit_length_percent< 0.8) {
+            count ++;
+            rule.append( "4," );
+        }
+        //第五个是分隔符内数字个数的最大值, 它与上一项的主要差别在于与总长度无关, 同样的, 对正常域名来说, 很少出现大于2个的数字, 而赌博色情域名则较长出现多个数字
+        int  max_digit_length  = maxDigitLength(url);
+        if (max_digit_length >=0 && max_digit_length < 10) {
+            count ++;
+            rule.append( "5," );
+        }
+       // 第六个是分隔符间的最大长度, 结果与域名总长度类似 类似  长度超过 %70
+        double max_sub_length = maxSubLength(url);
+        if (max_sub_length >= 0.7) {
+            count ++;
+            rule.append( "6," );
+        }
+        //第七个是数字字母的转换频率, 如a11b的转换频率就是2, 这一项正常域名和赌博色情域名的差别也比较大, 正常域名的切换频率普遍都比较小,而赌博色情域名则大多有1-3次的转换频率
+        int digit_letter_count = digitLetterCount(url);
+        if (digit_letter_count >= 1 && digit_letter_count <= 5) {
+            count ++;
+            rule.append( "7" );
+        }
+        String rules = new String(rule);
+        if (rules.endsWith( "," )) {
+            info.setRule( rules.substring( 0,rules.length()-1 ) );
+        } else {
+            info.setRule( rules );
+        }
+        rules = null;
+        rule = null;
+        info.setRuleCount( count );
+    }
+
+    private static int digitLetterCount(String url) {
+        int num = 0;
+        try {
+            String str =RemoveSymbolNumStr(url);
+            char [] ccs = str.toCharArray();
+            int len  = 0;
+            int swip = 0; //0 是数字。 1 是字母。
+            for (char cc: ccs) {
+                int  digit = Integer.valueOf( cc );
+                if (len == 0 ) {
+                    if ( digit >= 48 && digit<= 57) {
+                        swip = 0;
+                    } else  if (digit >= 65 && digit<= 90) {
+                        swip = 1;
+                    } else  if (digit >= 97 && digit<= 122) {
+                        swip = 1;
+                    }
+                    len ++;
+                    continue;
+                }
+                if ( digit >= 48 && digit<= 57) {
+                    if (swip == 1) {
+                        swip = 0;
+                        num ++;
+                    }
+                } else  if (digit >= 65 && digit<= 90) {
+                    if (swip == 0) {
+                        swip = 1;
+                        num ++;
+                    }
+                } else  if (digit >= 97 && digit<= 122) {
+                    if (swip == 0) {
+                        swip = 1;
+                        num ++;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return num;
+    }
+
+    private static double maxSubLength(String url) {
+        double num = 0;
+        String [] digit = url.split( "\\." );
+        for (String str : digit) {
+            double nule = new BigDecimal( (float) str.length() / url.length() ).setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
+            if (num < nule) {
+                num = nule;
+            }
+        }
+        return num;
+
+    }
+
+    private static int maxDigitLength(String url) {
+        int num = 0;
+        String [] digit = url.split( "\\." );
+        for (String str : digit) {
+            try {
+                int numlen  =  RemoveSymbolNum(url).length();
+                if (num < numlen) {
+                    num = numlen;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return num;
+
+    }
+
+    //数字占域名的百分比。
+    private static double digitLengthPercent(String url) {
+        double dlp = 0;
+
+        int lenNum = 0 ;
+        try {
+            lenNum =  RemoveSymbolNum(url).length();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (lenNum ==0 ) {
+            return dlp;
+        } else {
+            dlp = new BigDecimal( (float) lenNum / url.length() ).setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
+        }
+        return dlp;
+    }
+
+
+    public static int getMaches(String str,String substr){
+        int count = 0;//count用来接收子字符串substr在字符串str中出现的次数
+        int i = 0;
+        while(str.indexOf(substr,i) != -1) {
+            count++;
+            i=str.indexOf(substr, i)+substr.length();
+        }
+        return count;
+    }
+    public static void main(String[] args) throws NMapExecutionException, NMapInitializationException {
+         Map<String ,String > whoisMap = new ConcurrentHashMap<String ,String>();
+        whoisMap.put( "aaa","bbb" );
+        whoisMap.put( "bbb","ccc" );
+        whoisMap.put( "ccc","beeebb" );
+        whoisMap.put( "aeeeaa","fff" );
+        whoisMap.put( "fff","bbaab" );
+        whoisMap.put( "ggg","ggg" );
+        Iterator<Map.Entry<String ,String>> it = whoisMap.entrySet().iterator();
+        System.out.println(whoisMap);
+        while (it.hasNext() ) {
+            Map.Entry<String ,String>  entry = it.next();
+            whoisMap.remove(entry.getKey());
+        }
+        System.out.println(whoisMap);
+    }
+
+
 }

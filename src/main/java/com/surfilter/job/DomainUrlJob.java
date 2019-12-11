@@ -29,7 +29,7 @@ public class DomainUrlJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.domainUrlJob}")
     private void initIp() {
-        if (baseInfo.getSysSole().equals( Globle.SYS_ROLE_CONSUMER)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
         List<String> listDomainUrl  = null;

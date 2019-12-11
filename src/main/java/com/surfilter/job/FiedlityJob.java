@@ -30,7 +30,7 @@ public class FiedlityJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.fiedlityJob}")
     private void initIp() {
-        if (baseInfo.getSysSole().equals( Globle.SYS_ROLE_CONSUMER)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
         log.info( "开始加载村真ip到redis" );

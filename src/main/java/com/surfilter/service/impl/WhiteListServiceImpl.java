@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+@SuppressWarnings("ALL")
 @Service
 @Slf4j
 public class WhiteListServiceImpl implements IWhiteListService {

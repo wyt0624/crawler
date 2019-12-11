@@ -6,9 +6,9 @@ import lombok.Data;
 public class Ip {
     private long id;
     private String startIp;
-    private int  startIpNum;
+    private long  startIpNum;
     private String endIp;
-    private int endIpNum;
+    private long endIpNum;
     private String address;
     private String specificAddress;
     private String sourceType;

@@ -1,7 +1,7 @@
 package com.surfilter.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.surfilter.config.BaseInfo;
+import com.surfilter.config.BeanContext;
 import com.surfilter.config.RedisKeyInfo;
 import com.surfilter.config.StartConfig;
 import com.surfilter.dao.InfoMapper;
@@ -21,18 +21,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@SuppressWarnings("ALL")
 @Service
 @Slf4j
 @Data
-public class CrawingServerImpl implements ICrawingService{
+public class CrawingServerImpl implements ICrawingService,Runnable{
     @Autowired
     BaseInfo baseInfo;
     @Autowired
@@ -43,12 +41,32 @@ public class CrawingServerImpl implements ICrawingService{
     RedisKeyInfo redisKeyInfo;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    @Async()
-    public void crawingUrl(List<String> list) {
+    public List<String> list = new ArrayList<>(  );
+    public CrawingServerImpl() {
+    }
+    public CrawingServerImpl(List<String> list ){
+        this.list = list;
+    }
+    @Override
+    public void run() {
+        if (baseInfo == null) {
+            baseInfo = BeanContext.getApplicationContext().getBean(BaseInfo.class);
+        }
+        if (startConfig == null ) {
+            startConfig = BeanContext.getApplicationContext().getBean(StartConfig.class);
+        }
+        if (infoMapper == null) {
+            infoMapper = BeanContext.getApplicationContext().getBean(InfoMapper.class);
+        }
+        if (redisKeyInfo == null) {
+            redisKeyInfo = BeanContext.getApplicationContext().getBean(RedisKeyInfo.class);
+        }
+        if (stringRedisTemplate == null) {
+            stringRedisTemplate = BeanContext.getApplicationContext().getBean(StringRedisTemplate.class);
+        }
         try {
-
             List<Info> listInfo = new ArrayList<>();
-            List<AnaliseInfo> listAnaliseInfo = new ArrayList<>();
+            List<String> listAnaliseInfo = new ArrayList<>();
             for (String url : list) {
                 try {
                     boolean white = stringRedisTemplate.opsForHash().hasKey( redisKeyInfo.getWhileUrl(), url );
@@ -93,13 +111,13 @@ public class CrawingServerImpl implements ICrawingService{
                         String ip = IpUtil.getIpByDomain( url );
                         if (StringUtils.isNotBlank( ip )) {
                             info.setIp( ip );
-                            Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
-                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
-                            for (String address : adds) {
-                                info.setAddress( address );
-                                break;
-                            }
-                            adds.clear();
+//                            Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
+//                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
+//                            for (String address : adds) {
+//                                info.setAddress( address );
+//                                break;
+//                            }
+                            //adds.clear();
                         }
                         WhoisModel wm = WhoisUtil.queryWhois( url );
                         if (wm != null) {
@@ -119,25 +137,29 @@ public class CrawingServerImpl implements ICrawingService{
                                 info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
                             }
                         }
+                        info.setIsWhois( 1 );
                         info.setPort( port );
-                        info.setTitle( title );
+                        title = new String( title.getBytes(),"UTF-8");
+                        if(title.length()> 499) {
+                            info.setTitle( title.substring( 0, 499 ) );
+                        }
                         //抓取网页上手机号码。
-                        String phones = StringUtil.phoneRegEx( html );
-                        if (phones.length() > 498) {
-                            info.setWebPhone( phones.substring( 0, 498 ) );
-                        } else {
-                            info.setWebPhone( phones );
-                        }
+                        //String phones = StringUtil.phoneRegEx( html );
+//                        if (phones.length() > 498) {
+//                            info.setWebPhone( phones.substring( 0, 498 ) );
+//                        } else {
+//                            info.setWebPhone( phones );
+//                        }
                         //抓取网上的QQ号码。
-                        String qqs = StringUtil.qqRegEx( html, startConfig.getQqset() );
-                        if (StringUtils.isNotBlank( qqs )) {
-                            if (qqs.length() > 449) {
-                                info.setQq( qqs.substring( 0, 449 ) );
-                            } else {
-                                info.setQq( qqs );
-                            }
-                        }
-                        wm = null;
+//                        String qqs = StringUtil.qqRegEx( html, startConfig.getQqset() );
+//                        if (StringUtils.isNotBlank( qqs )) {
+//                            if (qqs.length() > 449) {
+//                                info.setQq( qqs.substring( 0, 449 ) );
+//                            } else {
+//                                info.setQq( qqs );
+//                            }
+//                        }
+//                        wm = null;
                     } catch (Exception e1) {
                         e1.printStackTrace();
                         info.setIsConn( 2 );
@@ -148,20 +170,46 @@ public class CrawingServerImpl implements ICrawingService{
                         AnaliseInfo analiseInfo = new AnaliseInfo();
                         analiseInfo.setTitle( title );
                         analiseInfo.setUrl( url );
-                        analiseInfo.setHtml( StringUtil.RemoveSymbolCh( html ) );
-                        listAnaliseInfo.add( analiseInfo );
+                        //analiseInfo.setHtml( StringUtil.RemoveSymbolCh( html ) );
+                        analiseInfo.setHtml( html );
+                        //域名清理。 符合域名规则的 将数据放到 队列中。
+                        StringUtil.domainExClean( url,info );
+                        if (info.getRuleCount() >= 5 && // 域名规则大约等于5的才可以进入
+                                !title.equals( "IIS7" ) && //
+                                !title.equals( "Welcome to nginx!") &&
+                                !title.equals( "登录到 Outlook" )
+                        ) {
+                            String webInfo = url+"|"+html;
+                            listAnaliseInfo.add( webInfo );
+                        }
                     }
                 }catch ( Exception e) {
                     e.printStackTrace();
                 }
             }
             if (listInfo.size() > 0) {
-                infoMapper.addListInfo( listInfo );
+                try {
+                    infoMapper.addListInfo( listInfo );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             listInfo.clear();
             if (listAnaliseInfo.size() > 0) {
-                String json = JSON.toJSONString( listAnaliseInfo );
-                stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), json );
+//                String json = JSON.toJSONString( listAnaliseInfo );
+//                try {
+//                    stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), json );
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                for (String stt: listAnaliseInfo) {
+                    try {
+                        stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), stt );
+                    } catch ( Exception e) {
+                        e.printStackTrace();
+                        stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), stt );
+                    }
+                }
             }
             listAnaliseInfo.clear();
         } catch (Exception e) {

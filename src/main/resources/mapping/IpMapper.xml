@@ -4,4 +4,26 @@
     <select id="ListIps" parameterType="int" resultType="ip" fetchSize="10000">
         select * from ip limit #{count},10000
     </select>
+    <insert id="addListIps"  parameterType="java.util.List">
+        insert into ip (
+            start_ip,
+            start_ip_num,
+            end_ip,
+            end_ip_num,
+            address,
+            specific_address
+        )  values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.startIp},
+            #{item.startIpNum},
+            #{item.endIp},
+            #{item.endIpNum},
+            #{item.address},
+            #{item.specificAddress}
+            )
+        </foreach>
+    </insert>
+
+
 </mapper>

@@ -2,11 +2,18 @@ package com.surfilter.content;
 
 public class Globle {
     /**
-     * 生产者模式
+     * 正常模式
      */
-    public static String SYS_ROLE_PROVIDER="provider";
+    public static String SYS_ROLE_NOMAL="nomal";
+
     /**
-     * 消费者模式
+     * nmap模式
      */
-    public static String SYS_ROLE_CONSUMER="consumer";
+    public static String SYS_ROLE_NMAP="nmap";
+
+    /**
+     * whois模式。
+     */
+    public static String SYS_ROLE_WHOIS="whois";
+
 }

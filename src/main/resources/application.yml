@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
   tomcat:
     uri-encoding: UTF-8
 spring:
@@ -18,7 +18,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://172.30.154.203:3306/crawler?characterEncoding=utf8&useSSL=true
+      url: jdbc:mysql://172.30.154.203:3306/crawler?characterEncoding=utf8&useSSL=true&allowMultiQueries=true
       username: root
       password: 123456
       initial-size: 5
@@ -59,7 +59,7 @@ mybatis:
 base:
   info:
     urlReadPath: D:/data/url_data/
-    sysSole: consumer    #consumer  生产者，提供定时程序，读取文件，读取域名文件。定时白名单 。 consumer 生产者， 为用户提供爬虫逻辑。
+    sysSole: whois    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式。
 redis-info:
   key:
     whileUrl: domain_whilt_url
@@ -71,7 +71,12 @@ redis-info:
 
 job:
   param:
-    fiedlityJob: 0 0 0 * * ?
-    #crawlerJob: 0/25 * * * * ?
-    crawlerJob: 0 0 0 * * ?
+    fiedlityJob: 0 0 1 * * ?
+    #crawlerJob: 0 0 3 * * ?
+    crawlerJob: 0/25 * * * * ?
     domainUrlJob: 0 0/10 * * * ?
+    nmapJob: 0 0/10 * * * ?
+    whoisJob: 0/30 * * * * ?
+logging:
+  file: D:/log/server.log
+

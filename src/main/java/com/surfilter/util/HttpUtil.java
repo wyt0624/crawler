@@ -59,22 +59,23 @@ public class HttpUtil {
      */
     public static boolean isSocketAliveUitlitybyCrunchify(String hostName, int port) {
         boolean isAlive = false;
-
         // 创建一个套接字
         SocketAddress socketAddress = new InetSocketAddress(hostName, port);
         Socket socket = new Socket();
-
         // 超时设置，单位毫秒
         int timeout = 2000;
-
         try {
             socket.connect(socketAddress, timeout);
-            socket.close();
             isAlive = true;
-
-        } catch (SocketTimeoutException exception) {
-
-        } catch (IOException exception) {
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+                socketAddress= null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return isAlive;
     }
@@ -135,6 +136,7 @@ public class HttpUtil {
                 .headers(header)
                 .ignoreContentType(true)
                 .timeout(timeout).get();
+
         return doc;
     }
 

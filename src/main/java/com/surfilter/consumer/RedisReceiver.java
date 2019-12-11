@@ -41,12 +41,12 @@ public class RedisReceiver {
         if (crawingService == null) {
             crawingService = BeanContext.getApplicationContext().getBean(CrawingServerImpl.class);
         }
-        stringRedisTemplate.delete(  redisKeyInfo.getCrawlerCache() );
+
         log.info( "消费者初始化成功" );
         for(;; ) {
             try {
-                log.info( String.valueOf( StartConfig.atomicInteger.get() ) );
-                if (StartConfig.atomicInteger.get() > 150) {
+                log.info( "线程总数量为{}" ,StartConfig.atomicInteger.get() );
+                if (StartConfig.atomicInteger.get() > 99) {
                     try {
                         Thread.sleep( 10000 );
                     } catch (InterruptedException e) {
@@ -55,7 +55,6 @@ public class RedisReceiver {
                     continue;
                 }
                 StartConfig.atomicInteger.incrementAndGet();
-
                 String message = "";
                 try {
                     message = stringRedisTemplate.opsForList().leftPop( redisKeyInfo.getCrawlerQueue() );
@@ -69,9 +68,16 @@ public class RedisReceiver {
                         list.toArray(strings);
                         stringRedisTemplate.opsForSet().add( redisKeyInfo.getCrawlerCache(), strings );
                         strings = null;
-                        crawingService.crawingUrl( list );
+
+                        StartConfig.executorService.execute( new CrawingServerImpl( list ) );
+                        //crawingService.crawingUrl( list );
                     }
                 } else {
+//                    StartConfig.atomicInteger.decrementAndGet();
+//                    if (StartConfig.atomicInteger.get() == 0){
+//
+//                        stringRedisTemplate.delete(  redisKeyInfo.getCrawlerCache() );
+//                    }
                     try {
                         Thread.sleep( 10000 );
                     } catch (InterruptedException e) {
@@ -84,9 +90,9 @@ public class RedisReceiver {
         }
     }
     public void receiveMessage(String message) {
-        List<String> list= JSONArray.parseArray(message,String.class);
-        if (list.size()>0) {
-            crawingService.crawingUrl( list );
-        }
+//        List<String> list= JSONArray.parseArray(message,String.class);
+//        if (list.size()>0) {
+//            crawingService.crawingUrl( list );
+//        }
     }
 }

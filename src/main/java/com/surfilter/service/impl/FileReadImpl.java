@@ -6,8 +6,8 @@ import com.surfilter.config.RedisKeyInfo;
 import com.surfilter.dao.UrlMapper;
 import com.surfilter.entity.DomainUrl;
 import com.surfilter.service.FileRead;
+import com.surfilter.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.parboiled.common.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -57,8 +57,8 @@ public class FileReadImpl implements FileRead {
                 boolean flag = true;
                 List<String> list  = new ArrayList<>(  );
                 while ((str = bf.readLine()) != null) {
-                    if (StringUtils.isEmpty(str) || !str.contains( "." ) || str.length() < 3 || str.startsWith( "-" )
-                           || str.endsWith( "*" ) || str.length() > 498) { //如果是空直接越过。
+                    boolean  isNomal = StringUtil.domainClean(str);
+                    if (!isNomal) {
                         continue;
                     }
                     str = str.replace("\"","").trim();

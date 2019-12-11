@@ -29,12 +29,14 @@ public class CrawlerJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.crawlerJob}")
     private void initIp() {
-        if (baseInfo.getSysSole().equals( Globle.SYS_ROLE_CONSUMER)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
         long count =  stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue());
-
         if (stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue() ) > 0) {
+            return;
+        }
+        if (stringRedisTemplate.hasKey(  redisKeyInfo.getCrawlerCache() )) {
             return;
         }
         urlMapper.updateListCrawlerStatus();
@@ -62,7 +64,7 @@ public class CrawlerJob {
                     e.printStackTrace();
                 }
                 urlMapper.updateListCrawler(list);
-                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{}" , list.size() );
+                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{} 条" , list.size() );
             } catch (Exception e) {
                 e.printStackTrace();
             }

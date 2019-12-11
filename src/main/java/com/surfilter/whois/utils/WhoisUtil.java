@@ -1,5 +1,6 @@
 package com.surfilter.whois.utils;
 
+import com.surfilter.config.WhoisStart;
 import com.surfilter.whois.models.WhoisModel;
 import com.surfilter.whois.utils.whoisparsers.WhoisParserFactory;
 import org.apache.commons.net.whois.WhoisClient;
@@ -158,23 +159,18 @@ public class WhoisUtil implements Serializable{
         String host = url;
         try{
             whoisClient = new WhoisClient();
-            //String host = new URL(url).getHost();
+            WhoisStart.whoisMap.put( whoisClient,System.currentTimeMillis() );
             if(host.startsWith("www.")){
                 host = host.substring(4);
             }
             String curDoaminServer = WhoisClient.DEFAULT_HOST;
-//            for(Tuple2<String,String> tuple2:domainServerList){
-//                if(host.endsWith(tuple2.a)){
-//                    curDoaminServer = tuple2.b;
-//                    break;
-//                }
-//            }
             whoisClient.connect(curDoaminServer);
             String result = whoisClient.query(host);
             whoisModel = WhoisParserFactory.getInstance().getParser().parseWhois(result);
         }catch(Exception ex){
             ex.printStackTrace();
         }finally{
+            WhoisStart.whoisMap.remove( whoisClient );
             if(whoisClient != null){
                 try {
                     whoisClient.disconnect();
