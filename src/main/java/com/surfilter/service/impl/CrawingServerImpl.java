@@ -9,12 +9,9 @@ import com.surfilter.entity.AnaliseInfo;
 import com.surfilter.entity.Info;
 import com.surfilter.enums.Param;
 import com.surfilter.service.ICrawingService;
-import com.surfilter.util.DateTimeUtil;
 import com.surfilter.util.HttpUtil;
 import com.surfilter.util.StringUtil;
-import com.surfilter.whois.models.WhoisModel;
 import com.surfilter.whois.utils.IpUtil;
-import com.surfilter.whois.utils.WhoisUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -80,7 +77,7 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                     log.info( "爬取url:{}", url );
                     try {
                         String newUrl = null;
-                        String port = "";
+                        //String port = "";
                         if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTPS_PORT.getCode() )) {
                             newUrl = Param.HTTPS_PORT.getMsg() + "://" + url;
                         } else if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTP_PORT.getCode() )) {
@@ -119,26 +116,26 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
 //                            }
                             //adds.clear();
                         }
-                        WhoisModel wm = WhoisUtil.queryWhois( url );
-                        if (wm != null) {
-                            if (DateTimeUtil.dateToTimstamp( wm.getCtime() ) != null && wm.getCtime() > 100000) {
-                                info.setCreationTime( DateTimeUtil.dateToTimstamp( wm.getCtime() ) );
-                            }
-                            if (DateTimeUtil.dateToTimstamp( wm.getEtime() ) != null && wm.getCtime() > 100000) {
-                                info.setExpireTime( DateTimeUtil.dateToTimstamp( wm.getEtime() ) );
-                            }
-                            if (StringUtils.isNotBlank( wm.getPhone() )) {
-                                info.setTel( wm.getPhone() );
-                            }
-                            if (StringUtils.isNotBlank( wm.getEmail() )) {
-                                info.setEmail( wm.getEmail() );
-                            }
-                            if (DateTimeUtil.dateToTimstamp( wm.getUtime() ) != null && wm.getCtime() > 100000) {
-                                info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
-                            }
-                        }
-                        info.setIsWhois( 1 );
-                        info.setPort( port );
+//                        WhoisModel wm = WhoisUtil.queryWhois( url );
+//                        if (wm != null) {
+//                            if (DateTimeUtil.dateToTimstamp( wm.getCtime() ) != null && wm.getCtime() > 100000) {
+//                                info.setCreationTime( DateTimeUtil.dateToTimstamp( wm.getCtime() ) );
+//                            }
+//                            if (DateTimeUtil.dateToTimstamp( wm.getEtime() ) != null && wm.getCtime() > 100000) {
+//                                info.setExpireTime( DateTimeUtil.dateToTimstamp( wm.getEtime() ) );
+//                            }
+//                            if (StringUtils.isNotBlank( wm.getPhone() )) {
+//                                info.setTel( wm.getPhone() );
+//                            }
+//                            if (StringUtils.isNotBlank( wm.getEmail() )) {
+//                                info.setEmail( wm.getEmail() );
+//                            }
+//                            if (DateTimeUtil.dateToTimstamp( wm.getUtime() ) != null && wm.getCtime() > 100000) {
+//                                info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
+//                            }
+//                        }
+//                        info.setIsWhois( 1 );
+//                        info.setPort( port );
                         title = new String( title.getBytes(),"UTF-8");
                         if(title.length()> 499) {
                             info.setTitle( title.substring( 0, 499 ) );

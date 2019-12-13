@@ -59,7 +59,7 @@ mybatis:
 base:
   info:
     urlReadPath: D:/data/url_data/
-    sysSole: whois    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式。
+    sysSole: nmap    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式。
 redis-info:
   key:
     whileUrl: domain_whilt_url

@@ -5,17 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.nmap4j.core.nmap.NMapExecutionException;
-import org.nmap4j.core.nmap.NMapInitializationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -228,28 +223,7 @@ public class StringUtil {
         return flag;
     }
 
-    /**
-     * 调用nmap进行扫描
-     * @param nmapDir nmap路径
-     * @param command 执行命令
-     *
-     * @return 执行回显
-     * */
-    public static  String getReturnData(String nmapDir,String command){
-        Process process = null;
-        StringBuffer stringBuffer = new StringBuffer();
-        try {
-            process = Runtime.getRuntime().exec(nmapDir + " " + command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
-            String line = null;
-            while((line = reader.readLine()) != null){
-                stringBuffer.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuffer.toString();
-    }
+
     public static  Long  getIpNum (String ip) {
         long ipnum = 0;
         try {
@@ -453,22 +427,118 @@ public class StringUtil {
         }
         return count;
     }
-    public static void main(String[] args) throws NMapExecutionException, NMapInitializationException {
-         Map<String ,String > whoisMap = new ConcurrentHashMap<String ,String>();
-        whoisMap.put( "aaa","bbb" );
-        whoisMap.put( "bbb","ccc" );
-        whoisMap.put( "ccc","beeebb" );
-        whoisMap.put( "aeeeaa","fff" );
-        whoisMap.put( "fff","bbaab" );
-        whoisMap.put( "ggg","ggg" );
-        Iterator<Map.Entry<String ,String>> it = whoisMap.entrySet().iterator();
-        System.out.println(whoisMap);
-        while (it.hasNext() ) {
-            Map.Entry<String ,String>  entry = it.next();
-            whoisMap.remove(entry.getKey());
+
+
+    public static void nmapOfPort(Info info, int operatingSystemType) {
+        //判断是什么操作系统。。 1 是linux 系统 2 是windows 系统 0 是初始化为确定。
+        String str = null;
+        if ( operatingSystemType == 0  ) {
+            String os = System.getProperty("os.name");
+            if(os.toLowerCase().startsWith("win")){
+                operatingSystemType = 2;
+            } else {
+                operatingSystemType = 1;
+            }
         }
-        System.out.println(whoisMap);
+        if (operatingSystemType == 1){
+            str =  nmapInfo(info.getUrl(),"/nmap");
+
+        } else if  (operatingSystemType == 2) {
+            str=  nmapInfo(info.getUrl(),"D:/nmap-6.46/nmap");
+        }
+        if (StringUtils.isNotBlank( str )) {
+            info.setPort( str );
+        }
+    }
+
+    public static String nmapInfo(String url,String dirPath) {
+        String str = null;
+        try {
+           //str  = getReturnData( "", "D:/nmap-6.46/nmap  -PS -n -F --host-timeout 10s " + url);
+           str  = getReturnData( "", dirPath + " -PS -n -F --host-timeout 10s " + url);
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
 
+
+    /**
+     * 调用nmap进行扫描
+     * @param nmapDir nmap路径
+     * @param command 执行命令
+     *
+     * @return 执行回显
+     * */
+    public static  String getReturnData(String nmapDir,String command) throws  Exception{
+        Process process = null;
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            process = Runtime.getRuntime().exec(nmapDir + " " + command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
+            String line = null;
+            boolean flag = false;
+            while((line = reader.readLine()) != null) {
+                if (line.startsWith( "PORT" )) {
+                    flag = true;
+                    continue;
+                }
+                if (line.startsWith( "Nmap" )) {
+                    flag = false;
+                }
+                if ( flag ) {
+                    if (StringUtils.isNotBlank(line)) {
+                        stringBuffer.append( line.trim().replaceAll( " +", " " ) + "|" );
+                    }
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String str = stringBuffer.toString();
+        if (str.endsWith( "|" )) {
+            str = str.substring( 0,str.length()-1 );
+        }
+        if (StringUtils.isNotBlank( str )) {
+            if (str.contains( "unknown" )) {
+                str = str.replace( "unknown","" );
+            }
+        }
+        if (str.length() > 4000) {
+            return str.substring( 0,4000 );
+        }
+
+        return str;
+    }
+    /**
+     * 去掉字符串中的特殊字符，只保留数字，中文，英文
+     * 提取中文：regEx=“[\\u4e00-\\u9fa5]";
+     * 提取数字：regEx=“[0-9]";
+     * 提取英文：regEx=“[a-zA-Z0-9]";
+     * 提取英文和数字：regEx=“[a-zA-Z0-9]";
+     * @param str
+     * @return
+     * @throws Exception
+     */
+    public static  String RemoveSymbolaaa(String str) throws  Exception{
+        String regEx="[0-9]";
+        Pattern p   =   Pattern.compile(regEx);
+        Matcher m   =   p.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()){
+            sb.append(m.group() + ",");
+        }
+        return new String(sb);
+    }
+
+    public static void main(String[] args) {
+        String str=  "80/tcp    open  http 443/tcp   open  https 8888/tcp  open  sun-answerbook 49152/tcp open   49153/tcp open   49154/tcp open   49155/tcp open   49156/tcp open   49157/tcp open";
+        //RemoveSymbolaaa(str);
+
+
+//        System.out.println(str.length());
+//        System.out.println(str);
+    }
 }

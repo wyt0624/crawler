@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.surfilter.dao.WhoisMapper">
-    <select id="listWhois" resultType="info" >
+    <select id="listWhois" parameterType="java.lang.Long" resultType="info" >
         select url,id from info
         <where>
             category >0
             and is_conn = 1
             and email is not null
             and is_whois =0
+            and id > #{maxId}
         </where>
+        order by id asc
         limit 100
     </select>
     <update id="updatelistWhois" parameterType="java.util.List">
