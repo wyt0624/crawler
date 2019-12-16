@@ -33,10 +33,15 @@ public class NampJob {
                 log.info( "没有要执行的nmap数据" );
                 break;
             }
+
             for (Info  info: list)  {
-                StringUtil.nmapOfPort(info,operatingSystemType);
-                log.info( "nmap 域名:{},的结果为:{}",info.getUrl(), info.getPort() );
-                info.setIsPort( 1 );
+                try {
+                    StringUtil.nmapOfPort( info, operatingSystemType );
+                    log.info( "nmap 域名:{},的结果为:{}", info.getUrl(), info.getPort() );
+                    info.setIsPort( 1 );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             //修改数据库状态。
             try {

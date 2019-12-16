@@ -52,19 +52,22 @@ public class CrawlerJob {
                     if ( stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getCrawlerCache(),domainUrl.getUrl() )){
                         continue;
                     }
+                    if (!stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getWhileUrl(),domainUrl.getUrl()  )) {
+                        continue;
+                    }
                     listDomainUrl.add( domainUrl.getUrl() );
                 }
                 if (listDomainUrl.size() > 0 ) {
                     String json = JSON.toJSONString( listDomainUrl );
                     stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getCrawlerQueue(), json );
-                    listDomainUrl.clear();
                 }
                 try {
                 } catch ( Exception e) {
                     e.printStackTrace();
                 }
                 urlMapper.updateListCrawler(list);
-                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{} 条" , list.size() );
+                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{} 条" , listDomainUrl.size() );
+                listDomainUrl.clear();
             } catch (Exception e) {
                 e.printStackTrace();
             }

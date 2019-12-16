@@ -62,9 +62,9 @@ public class FileReadImpl implements FileRead {
                         continue;
                     }
                     str = str.replace("\"","").trim();
-                    if (stringRedisTemplate.opsForHash().hasKey( redisKeyInfo.getWhileUrl() ,str ) ){  //判断是否在白名单中。
-                        continue;
-                    }
+//                    if (stringRedisTemplate.opsForHash().hasKey( redisKeyInfo.getWhileUrl() ,str ) ){  //判断是否在白名单中。
+//                        continue;
+//                    }
                     if (!stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getDomainUrl(), str )) {
                         try {
                             stringRedisTemplate.opsForSet().add( redisKeyInfo.getDomainUrl(), str );

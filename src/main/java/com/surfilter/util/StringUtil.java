@@ -441,7 +441,7 @@ public class StringUtil {
             }
         }
         if (operatingSystemType == 1){
-            str =  nmapInfo(info.getUrl(),"/nmap");
+            str =  nmapInfo(info.getUrl(),"nmap");
 
         } else if  (operatingSystemType == 2) {
             str=  nmapInfo(info.getUrl(),"D:/nmap-6.46/nmap");
@@ -540,5 +540,6 @@ public class StringUtil {
 
 //        System.out.println(str.length());
 //        System.out.println(str);
+//        HttpUtil.getDocByUrl("http://www.chilangedu.com");
     }
 }

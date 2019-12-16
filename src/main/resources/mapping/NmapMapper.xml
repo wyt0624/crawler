@@ -6,7 +6,6 @@
         <where>
             category >0
             and is_conn = 1
-            and email is not null
             and is_port =0
         </where>
         order by id asc

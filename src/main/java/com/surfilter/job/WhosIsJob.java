@@ -1,7 +1,6 @@
 package com.surfilter.job;
 
 import com.surfilter.config.BaseInfo;
-import com.surfilter.config.StartConfig;
 import com.surfilter.content.Globle;
 import com.surfilter.dao.WhoisMapper;
 import com.surfilter.entity.Info;
@@ -21,6 +20,8 @@ public class WhosIsJob {
     BaseInfo baseInfo;
     @Autowired
     WhoisMapper whoisMapper;
+    @Autowired
+    WhoisServiceImpl whoisServiceImpl;
     @Scheduled(cron = "${job.param.whoisJob}")
     private void initWhois() {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_WHOIS)) {
@@ -33,12 +34,7 @@ public class WhosIsJob {
             if (list.size() <= 0 ) {
                 break;
             }
-            for (Info info:list) {
-                if (maxId < info.getId()) {
-                    maxId = info.getId();
-                }
-            }
-            StartConfig.executorService.execute( new WhoisServiceImpl( list ) );
+            whoisServiceImpl.whoisRun(list);
         }
     }
 

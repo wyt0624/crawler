@@ -132,11 +132,24 @@ public class HttpUtil {
         header.put("Accept-Language", "zh-cn,zh;q=0.5");
         header.put("Accept-Encoding", "gzip, deflate, sdch");
         header.put("Connection", "keep-alive");
-        Document doc = Jsoup.connect(url)
-                .headers(header)
-                .ignoreContentType(true)
-                .timeout(timeout).get();
-
+        Document doc = null;
+        boolean  flag = true;
+        try {
+            doc = Jsoup.connect(url)
+                    .headers(header)
+                    .ignoreContentType(true)
+                    .timeout(timeout).get();
+            flag = true;
+        } catch ( Exception e) {
+            flag = false;
+            e.printStackTrace();
+        }
+        if (!flag) {
+            doc = Jsoup.connect("www."+url)
+                    .headers(header)
+                    .ignoreContentType(true)
+                    .timeout(timeout).get();
+        }
         return doc;
     }
 
@@ -200,4 +213,5 @@ public class HttpUtil {
         Document document = Jsoup.parse(getPageContent_addHeader(url));
         return document;
     }
+
 }

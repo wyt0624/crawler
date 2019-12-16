@@ -6,9 +6,7 @@
         <where>
             category >0
             and is_conn = 1
-            and email is not null
             and is_whois =0
-            and id > #{maxId}
         </where>
         order by id asc
         limit 100

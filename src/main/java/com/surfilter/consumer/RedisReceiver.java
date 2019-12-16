@@ -73,9 +73,8 @@ public class RedisReceiver {
                         //crawingService.crawingUrl( list );
                     }
                 } else {
-//                    StartConfig.atomicInteger.decrementAndGet();
+                    StartConfig.atomicInteger.decrementAndGet();
 //                    if (StartConfig.atomicInteger.get() == 0){
-//
 //                        stringRedisTemplate.delete(  redisKeyInfo.getCrawlerCache() );
 //                    }
                     try {
