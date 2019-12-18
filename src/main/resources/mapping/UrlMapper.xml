@@ -19,7 +19,7 @@
     </update>
 
     <select id="listCrawler"  resultType="domainUrl" >
-        select id,url from domain_url where crawling_status = 2  and url not in (select url from white_url ) limit 50
+        select id,url from domain_url where crawling_status = 2  and  url not in (select url from white_url ) limit 50
     </select>
     <update id="updateListCrawler"  parameterType="java.util.List">
       update  domain_url  set crawling_status = 1
@@ -42,5 +42,4 @@
             </foreach>
         </where>
     </update>
-
 </mapper>

@@ -32,6 +32,7 @@ public class DomainUrlJob {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
+        log.info("缓存失败,重新入缓存程序开启。");
         List<String> listDomainUrl  = null;
         for (;;) {
             try {

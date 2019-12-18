@@ -133,25 +133,28 @@ public class HttpUtil {
         header.put("Accept-Encoding", "gzip, deflate, sdch");
         header.put("Connection", "keep-alive");
         Document doc = null;
-        boolean  flag = true;
         try {
             doc = Jsoup.connect(url)
                     .headers(header)
                     .ignoreContentType(true)
                     .timeout(timeout).get();
-            flag = true;
         } catch ( Exception e) {
-            flag = false;
             e.printStackTrace();
-        }
-        if (!flag) {
-            doc = Jsoup.connect("www."+url)
-                    .headers(header)
-                    .ignoreContentType(true)
-                    .timeout(timeout).get();
         }
         return doc;
     }
+
+    public static void main(String[] args )  {
+        try {
+            Document doc = getDocByUrl( "http://681444.com", 10000 );
+            System.out.println(doc.title());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     public static String getNewUrl(String url) {
         String newUrl = null;

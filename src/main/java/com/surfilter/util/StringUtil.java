@@ -111,7 +111,9 @@ public class StringUtil {
             return phones;
         }
     }
-
+    /**
+     * 匹配qq
+     * */
     public static String qqRegEx(String html, Set<String > qqset) {
         try {
             html =  RemoveSymbol(html);
@@ -272,58 +274,7 @@ public class StringUtil {
         return true;
 
     }
-    //符合数据规范的 在入队列。
-    public static void domainExClean(String url, Info info) {
-        StringBuffer rule = new StringBuffer( "" );
-        int count = 0;
-        // 域名长度在5 - 20
-        if(url.length() > 4 && url.length() <= 20) {
-            count ++;
-            rule.append( "1," );
-        }
-        //  . 出现在1 - 4 之间。
-        int num  = getMaches(url,".");
-        if (num > 0 && num <4) {
-            count ++;
-            rule.append( "2," );
-        }
-        //域名中特殊字符频率中。黄色网站及域名网站没有变化。故 count+1
-        count ++;
-        rule.append( "3," );
-        // 数字 占域名总长度。 0 - 0.8 之间。
-        double digit_length_percent = digitLengthPercent(url);
-        if (digit_length_percent >=0  && digit_length_percent< 0.8) {
-            count ++;
-            rule.append( "4," );
-        }
-        //第五个是分隔符内数字个数的最大值, 它与上一项的主要差别在于与总长度无关, 同样的, 对正常域名来说, 很少出现大于2个的数字, 而赌博色情域名则较长出现多个数字
-        int  max_digit_length  = maxDigitLength(url);
-        if (max_digit_length >=0 && max_digit_length < 10) {
-            count ++;
-            rule.append( "5," );
-        }
-       // 第六个是分隔符间的最大长度, 结果与域名总长度类似 类似  长度超过 %70
-        double max_sub_length = maxSubLength(url);
-        if (max_sub_length >= 0.7) {
-            count ++;
-            rule.append( "6," );
-        }
-        //第七个是数字字母的转换频率, 如a11b的转换频率就是2, 这一项正常域名和赌博色情域名的差别也比较大, 正常域名的切换频率普遍都比较小,而赌博色情域名则大多有1-3次的转换频率
-        int digit_letter_count = digitLetterCount(url);
-        if (digit_letter_count >= 1 && digit_letter_count <= 5) {
-            count ++;
-            rule.append( "7" );
-        }
-        String rules = new String(rule);
-        if (rules.endsWith( "," )) {
-            info.setRule( rules.substring( 0,rules.length()-1 ) );
-        } else {
-            info.setRule( rules );
-        }
-        rules = null;
-        rule = null;
-        info.setRuleCount( count );
-    }
+
 
     private static int digitLetterCount(String url) {
         int num = 0;
@@ -532,14 +483,66 @@ public class StringUtil {
         }
         return new String(sb);
     }
-
+    //符合数据规范的 在入队列。
+    public static void domainExClean(String url, Info info) {
+        StringBuffer rule = new StringBuffer( "" );
+        int count = 0;
+        // 域名长度在5 - 20
+        if(url.length() > 4 && url.length() <= 20) {
+            count ++;
+            rule.append( "1," );
+        }
+        //  . 出现在1 - 4 之间。
+        int num  = getMaches(url,".");
+        if (num > 0 && num <4) {
+            count ++;
+            rule.append( "2," );
+        }
+        //域名中特殊字符频率中。黄色网站及域名网站没有变化。故 count+1
+        count ++;
+        rule.append( "3," );
+        // 数字 占域名总长度。 0 - 0.8 之间。
+        double digit_length_percent = digitLengthPercent(url);
+        if (digit_length_percent >=0  && digit_length_percent< 0.8) {
+            count ++;
+            rule.append( "4," );
+        }
+        //第五个是分隔符内数字个数的最大值, 它与上一项的主要差别在于与总长度无关, 同样的, 对正常域名来说, 很少出现大于2个的数字, 而赌博色情域名则较长出现多个数字
+        int  max_digit_length  = maxDigitLength(url);
+        if (max_digit_length >=0 && max_digit_length < 10) {
+            count ++;
+            rule.append( "5," );
+        }
+        // 第六个是分隔符间的最大长度, 结果与域名总长度类似 类似  长度超过 %70
+        double max_sub_length = maxSubLength(url);
+        if (max_sub_length >= 0.7) {
+            count ++;
+            rule.append( "6," );
+        }
+        //第七个是数字字母的转换频率, 如a11b的转换频率就是2, 这一项正常域名和赌博色情域名的差别也比较大, 正常域名的切换频率普遍都比较小,而赌博色情域名则大多有1-3次的转换频率
+        int digit_letter_count = digitLetterCount(url);
+        if (digit_letter_count >= 1 && digit_letter_count <= 5) {
+            count ++;
+            rule.append( "7" );
+        }
+        String rules = new String(rule);
+        if (rules.endsWith( "," )) {
+            info.setRule( rules.substring( 0,rules.length()-1 ) );
+        } else {
+            info.setRule( rules );
+        }
+        rules = null;
+        rule = null;
+        info.setRuleCount( count );
+    }
     public static void main(String[] args) {
-        String str=  "80/tcp    open  http 443/tcp   open  https 8888/tcp  open  sun-answerbook 49152/tcp open   49153/tcp open   49154/tcp open   49155/tcp open   49156/tcp open   49157/tcp open";
-        //RemoveSymbolaaa(str);
-
-
-//        System.out.println(str.length());
-//        System.out.println(str);
-//        HttpUtil.getDocByUrl("http://www.chilangedu.com");
+//        String str=  "80/tcp    open  http 443/tcp   open  https 8888/tcp  open  sun-answerbook 49152/tcp open   49153/tcp open   49154/tcp open   49155/tcp open   49156/tcp open   49157/tcp open";
+//        //RemoveSymbolaaa(str);
+//
+//
+////        System.out.println(str.length());
+////        System.out.println(str);
+////        HttpUtil.getDocByUrl("http://www.chilangedu.com");
+        domainExClean("nsg-dcloud.pingan.com.cn", new Info());
     }
 }

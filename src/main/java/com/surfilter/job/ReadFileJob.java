@@ -15,8 +15,8 @@ public class ReadFileJob {
     BaseInfo baseInfo;
     @Autowired
     FileRead fileRead;
-    @Scheduled( fixedRate = 1000 * 600,initialDelay = 10000)
-    private void readFile() {
+    @Scheduled( fixedRate = 1000 * 60,initialDelay = 10000)
+    private void readFile() throws InterruptedException {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }

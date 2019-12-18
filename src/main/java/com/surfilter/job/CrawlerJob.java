@@ -29,6 +29,7 @@ public class CrawlerJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.crawlerJob}")
     private void initIp() {
+        log.info( "丢失数据重新入库程序开启。" );
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
@@ -52,7 +53,7 @@ public class CrawlerJob {
                     if ( stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getCrawlerCache(),domainUrl.getUrl() )){
                         continue;
                     }
-                    if (!stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getWhileUrl(),domainUrl.getUrl()  )) {
+                    if (stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getWhileUrl(),domainUrl.getUrl()  )) {
                         continue;
                     }
                     listDomainUrl.add( domainUrl.getUrl() );

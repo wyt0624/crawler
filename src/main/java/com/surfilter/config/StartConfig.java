@@ -48,7 +48,7 @@ public class StartConfig {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
-        isOSLinux =  isOSLinux();
+        isOSLinux();
         try {
             SslUtils.ignoreSsl();//忽略所有证书。
         } catch (Exception e) {

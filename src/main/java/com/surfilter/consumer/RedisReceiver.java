@@ -48,7 +48,7 @@ public class RedisReceiver {
                 log.info( "线程总数量为{}" ,StartConfig.atomicInteger.get() );
                 if (StartConfig.atomicInteger.get() > 99) {
                     try {
-                        Thread.sleep( 10000 );
+                        Thread.sleep( 20000 );
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -78,7 +78,7 @@ public class RedisReceiver {
 //                        stringRedisTemplate.delete(  redisKeyInfo.getCrawlerCache() );
 //                    }
                     try {
-                        Thread.sleep( 10000 );
+                        Thread.sleep( 20000 );
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

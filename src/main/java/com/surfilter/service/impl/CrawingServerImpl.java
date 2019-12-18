@@ -71,6 +71,7 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                 }
                 try {
                     Info info = new Info();
+
                     StringUtil.domainExClean( url, info );
                     // 域名规则大约等于5的才可以进入
                     if (info.getRuleCount() >= 5) {
@@ -80,17 +81,31 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                         log.info( "爬取url:{}", url );
                         try {
                             String newUrl = null;
-                            //String port = "";
+                            String HTTP = "";
                             if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTPS_PORT.getCode() )) {
-                                newUrl = Param.HTTPS_PORT.getMsg() + "://" + url;
+                                HTTP = Param.HTTPS_PORT.getMsg() + "://";
                             } else if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTP_PORT.getCode() )) {
-                                newUrl = Param.HTTP_PORT.getMsg() + "://" + url;
+                                HTTP = Param.HTTP_PORT.getMsg() + "://";
                             } else {
-                                newUrl = Param.HTTP_PORT.getMsg() + "://" + url;
+                                HTTP = Param.HTTPS_PORT.getMsg() + "://";
                             }
-                            doc = HttpUtil.getDocByUrl( HttpUtil.getNewUrl( newUrl ), 10000 );
-                            html = doc.html();
-                            title = doc.title();
+
+
+                            try {
+                                newUrl = HTTP + url;
+                                doc = HttpUtil.getDocByUrl(newUrl , 10000 );
+                            } catch ( Exception e ) {
+                                newUrl = HTTP + "www." + url;
+                                e.printStackTrace();
+                            }
+                            //url已经判断是带www.的域名了 不需要在爬
+                            if (url.startsWith( "www." )) {
+                                throw  new  Exception();
+                            } else {
+                                doc = HttpUtil.getDocByUrl( newUrl, 10000 );
+                                html = doc.html();
+                            }
+
                             if (doc.select( "iframe" ).hasAttr( "src" )) { //如果html中包含ifream 标签
                                 String ifreamUrl = doc.select( "iframe" ).first().attr( "src" );
                                 if (!(ifreamUrl.contains( "https://" ) || ifreamUrl.contains( "http://" ))) {
@@ -101,12 +116,13 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                                     }
                                 }
                                 try {
-                                    doc = HttpUtil.getDocByUrl( HttpUtil.getNewUrl( ifreamUrl ), 10000 );
+                                    doc = HttpUtil.getDocByUrl( ifreamUrl , 10000 );
                                     html += doc.html();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
+                            title = doc.title();
                             info.setIsConn( 1 );//可以访问。
                             String ip = IpUtil.getIpByDomain( url );
                             if (StringUtils.isNotBlank( ip )) {
@@ -142,7 +158,10 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                             title = new String( title.getBytes(), "UTF-8" );
                             if (title.length() > 499) {
                                 info.setTitle( title.substring( 0, 499 ) );
+                            } else {
+                                info.setTitle( title );
                             }
+
                             //抓取网页上手机号码。
                             //String phones = StringUtil.phoneRegEx( html );
     //                        if (phones.length() > 498) {
@@ -178,6 +197,8 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                         }
                     } else {
                         info.setIsConn( 3 );
+                        info.setUrl( url );
+                        listInfo.add( info );
                     }
                 }catch ( Exception e) {
                     e.printStackTrace();
