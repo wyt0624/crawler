@@ -29,10 +29,10 @@ public class CrawlerJob {
     private StringRedisTemplate stringRedisTemplate;
     @Scheduled(cron = "${job.param.crawlerJob}")
     private void initIp() {
-        log.info( "丢失数据重新入库程序开启。" );
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
+        log.info( "丢失数据重新入库程序开启。" );
         long count =  stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue());
         if (stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue() ) > 0) {
             return;

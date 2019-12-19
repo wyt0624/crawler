@@ -20,6 +20,7 @@ public class ReadFileJob {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
             return;
         }
+        log.info( "读取文件程序启动" );
         //读取文件中的内容。并将文件放到redis中去重。然后插入数据库 然后插入队列。
         fileRead.doMainToRedis();
     }
