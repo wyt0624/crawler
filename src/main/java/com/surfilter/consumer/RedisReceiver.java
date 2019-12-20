@@ -57,6 +57,7 @@ public class RedisReceiver {
                 StartConfig.atomicInteger.incrementAndGet();
                 String message = "";
                 try {
+                    //message = stringRedisTemplate.opsForList().leftPop( redisKeyInfo.getCrawlerQueue() );
                     message = stringRedisTemplate.opsForList().leftPop( redisKeyInfo.getCrawlerQueue() );
                 } catch (Exception e) {
                     e.printStackTrace();
