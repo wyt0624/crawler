@@ -2,6 +2,9 @@ server:
   port: 8083
   tomcat:
     uri-encoding: UTF-8
+    max-threads: 500
+  servlet:
+    context-path: /dns
 spring:
   redis:
 #    cluster:
@@ -32,6 +35,15 @@ spring:
       test-on-borrow: false
       pool-prepared-statements: false
       max-pool-prepared-statement-per-connection-size: 20
+  freemarker:
+    charset: UTF-8
+    suffix: .ftl
+    content-type: text/html; charset=utf-8
+    template-loader-path=classpath: /templates/**
+    request-context-attribute: dn
+  mvc:
+    static-path-pattern: /static/**
+
 
 # clickhouse
 #  datasource:
@@ -59,7 +71,7 @@ mybatis:
 base:
   info:
     urlReadPath: /data/url_data/
-    sysSole: nomal    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式
+    sysSole: web    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式  web模式
 redis-info:
   key:
     whileUrl: domain_whilt_url
