@@ -14,4 +14,17 @@
     <select id = "listWhiteUrl" resultType="whiteUrl">
         select id,url,name from white_url  limit 0,1000000
     </select>
+    <insert id="insertWhiteUrl" parameterType="java.util.List" useGeneratedKeys="true">
+        insert into white_url (
+            url,
+            name
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.url},
+            #{item.name}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

@@ -1,18 +1,104 @@
 package com.surfilter;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.surfilter.dao.CountryMapper;
 import com.surfilter.dao.IpMapper;
+import com.surfilter.dao.WhiteUrlMapper;
+import com.surfilter.entity.CountryInfo;
+import com.surfilter.entity.WhiteUrl;
+import com.surfilter.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @SuppressWarnings("ALL")
 @SpringBootTest
 @Slf4j
 class CrawlerUtilApplicationTests {
-
-   @Autowired
+    @Autowired
     IpMapper ipMapper;
+    @Autowired
+    WhiteUrlMapper whiteUrlMapper;
+    @Autowired
+    CountryMapper countryMapper;
+
+    @Test
+    void incountryInfoCaptal(){
+        List<Map<String,String>> lmap =    FileUtil.ReadFileList("F:\\aaa.txt" );
+
+        for(Map<String,String> map :lmap){
+
+            Set<String> key = map.keySet();
+            List<String> list=new ArrayList<>(key);
+            String newKey=list.get(0);
+            System.out.println(newKey);
+
+            String value = map.get( newKey );
+            System.out.println(value);
+            int count =countryMapper.getCount(newKey.trim());
+            if (count >= 1) {
+                map.clear();
+                map.put("key",newKey);
+                map.put("value",value);
+                countryMapper.updateCountryCaptical(map);
+            } else {
+                countryMapper.insertCountryInfo(map);
+            }
+            map.clear();
+        }
+        //countryMapper.insertCountry( list );
+    }
+    @Test
+    void white(){
+        List<String> list = FileUtil.ReadFileList1( "G:\\aliyun-safe-match\\data\\fish\\所有白名单.csv"  );
+        List<WhiteUrl> whiteUrls = new ArrayList<>(  );
+        int count = 0;
+        for (String str: list) {
+            String [] ars = str.split( "," );
+            if(ars.length > 1) {
+                WhiteUrl whiteUrl  = new WhiteUrl();
+                String name = ars[0];
+                String url = ars[1];
+                if (url.startsWith( "www." )) {
+                    url = url.substring( 4,url.length() );
+                }
+                whiteUrl.setName( name );
+                whiteUrl.setUrl( url );
+                whiteUrls.add( whiteUrl );
+                if (whiteUrls.size() > 1000) {
+                    whiteUrlMapper.insertWhiteUrl(whiteUrls);
+                    whiteUrls.clear();
+                }
+            }
+        }
+        whiteUrlMapper.insertWhiteUrl(whiteUrls);
+
+    }
+    @Test
+    void incountryInfo(){
+        String str =    FileUtil.ReadFile("C:\\Users\\Administrator\\Desktop\\country-code-master\\country-code.json" );
+        JSONArray array = JSON.parseArray(str);
+        System.out.println(array);
+        List<CountryInfo> list = new ArrayList<>(  );
+
+        for(int i=0;i<array.size();i++){
+            JSONObject job = array.getJSONObject(i);  // 遍历 jsonarray 数组，把每一个对象转成 json 对象
+            //System.out.println(job.get("name")+"=") ;  // 得到 每个对象中的属性值
+            CountryInfo ci = new CountryInfo();
+            ci.setCountryCn( job.get("cn").toString() );
+            ci.setCountryEn( job.get("en").toString() );
+            list.add( ci );
+        }
+        countryMapper.insertCountry( list );
+    }
     @Test
     void contextLoads() throws Exception {
 //        InputStreamReader isr = null;

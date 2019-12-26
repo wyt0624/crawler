@@ -18,7 +18,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://172.30.154.203:3306/crawler?useUnicode=true&useSSL=false&allowMultiQueries=true
+      url: jdbc:mysql://172.30.154.204:3306/crawler?useUnicode=true&useSSL=false&allowMultiQueries=true
       username: root
       password: 123456
       initial-size: 5
@@ -59,7 +59,7 @@ mybatis:
 base:
   info:
     urlReadPath: /data/url_data/
-    sysSole: nomal    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式。
+    sysSole: nomal    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式
 redis-info:
   key:
     whileUrl: domain_whilt_url

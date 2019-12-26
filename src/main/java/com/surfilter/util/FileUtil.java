@@ -2,7 +2,7 @@ package com.surfilter.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.Set;
+import java.util.*;
 
 public class FileUtil {
 
@@ -73,7 +73,112 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 读取文件。并将信息装换为字符串返回。
+     * @param Path
+     * @return
+     */
+    public static String ReadFile(String Path){
+        BufferedReader reader = null;
+        String laststr = "";
+        try{
+            FileInputStream fileInputStream = new FileInputStream(Path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+            reader = new BufferedReader(inputStreamReader);
+            String tempString = null;
+            while((tempString = reader.readLine()) != null){
+                laststr += tempString;
+            }
+            reader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return laststr;
+    }
+    /**
+     * 读取文件。并将信息装换为字符串返回。
+     * @param Path
+     * @return
+     */
+    public static List<Map<String,String> >  ReadFileList(String Path){
 
+        int count =0;
+        BufferedReader reader = null;
+        //String laststr = "";
 
+        List<Map<String,String>> list = new ArrayList<>();
+        try{
+            FileInputStream fileInputStream = new FileInputStream(Path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+            reader = new BufferedReader(inputStreamReader);
+            String tempString = null;
+            while((tempString = reader.readLine()) != null){
+                Map<String,String> map = new HashMap<>(  );
+                String[] strs = tempString.split( "-" );
+                if (strs.length > 1) {
+                    String country = strs[0].trim();
+                    String capital = strs[1].trim();
+                    if (capital.contains( "(" )) {
+                        capital = capital.substring( 0, capital.indexOf( "(" ) );
+                    }
+                    map.put( country, capital );
+                    list.add( map );
 
+                }
+            }
+            reader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return list;
+    }
+    /**
+     * 读取文件。并将信息装换为字符串返回。
+     * @param Path
+     * @return
+     */
+    public static List<String>  ReadFileList1(String Path){
+        int count =0;
+        BufferedReader reader = null;
+        //String laststr = "";
+
+        List<String> list = new ArrayList<>();
+        try{
+            FileInputStream fileInputStream = new FileInputStream(Path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+            reader = new BufferedReader(inputStreamReader);
+            String tempString = null;
+            while((tempString = reader.readLine()) != null){
+                    list.add( tempString );
+            }
+            reader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return list;
+    }
 }

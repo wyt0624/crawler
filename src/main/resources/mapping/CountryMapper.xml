@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surfilter.dao.CountryMapper">
+
+    <insert id="insertCountry" parameterType="java.util.List" useGeneratedKeys="true">
+        insert into country_info (
+          country_cn,
+          country_en,
+          province,
+          lng_x,
+          lng_y,
+          capital
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.countryCn},
+            #{item.countryEn},
+            #{item.province},
+            #{item.lngX},
+            #{item.lngY},
+            #{item.capital}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getCount" resultType="int">
+        select count(1) from country_info
+        <where>
+            country_cn = #{en}
+        </where>
+
+    </select>
+    <update id="updateCountryCaptical" parameterType="java.util.Map">
+      update  country_info set capital = #{value} where country_cn = #{key}
+    </update>
+    <insert id="insertCountryInfo" parameterType="java.util.Map" >
+      insert country_info(country_cn,capital) values (#{key},#{value})
+    </insert>
+
+
+</mapper>
