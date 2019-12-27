@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.surfilter.dao.WhoisMapper">
-    <select id="listWhois" parameterType="java.lang.Long" resultType="info" >
+    <select id="listWhois" parameterType="java.lang.Long" resultType="info">
         select url,id from info
         <where>
             category >0
@@ -14,23 +14,23 @@
     <update id="updatelistWhois" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update info
-            <set >
-                <if test="item.creationTime != null " >
+            <set>
+                <if test="item.creationTime != null ">
                     creation_time = #{item.creationTime,jdbcType=TIMESTAMP},
                 </if>
-                <if test="item.expireTime != null" >
+                <if test="item.expireTime != null">
                     expire_time = #{item.expireTime,jdbcType=TIMESTAMP},
                 </if>
-                <if test="item.lastUpdateTime != null" >
+                <if test="item.lastUpdateTime != null">
                     last_update_time = #{item.lastUpdateTime,jdbcType=TIMESTAMP},
                 </if>
-                <if test="item.lastUpdateTime != null" >
+                <if test="item.lastUpdateTime != null">
                     email = #{item.email,jdbcType=VARCHAR},
                 </if>
-                <if test="item.tel != null" >
+                <if test="item.tel != null">
                     tel = #{item.tel,jdbcType=VARCHAR},
                 </if>
-                <if test="item.isWhois != null" >
+                <if test="item.isWhois != null">
                     is_whois = #{item.isWhois,jdbcType=INTEGER},
                 </if>
             </set>

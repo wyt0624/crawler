@@ -1,4 +1,5 @@
 package com.surfilter.util;
+
 import com.surfilter.config.StartConfig;
 
 import java.io.BufferedReader;
@@ -12,21 +13,21 @@ public class Ping {
     public static boolean ping(String ipAddress, int pingTimes, int timeOut) {
         BufferedReader in = null;
         Runtime r = Runtime.getRuntime();  // 将要执行的ping命令,此命令是windows格式的命令
-        String pingCommand = "ping " + ipAddress + " -n " + pingTimes    + " -w " + timeOut;
+        String pingCommand = "ping " + ipAddress + " -n " + pingTimes + " -w " + timeOut;
         if (StartConfig.isOSLinux()) {
-            pingCommand = "ping " + ipAddress + " -c " + pingTimes    + " -w " + timeOut;
+            pingCommand = "ping " + ipAddress + " -c " + pingTimes + " -w " + timeOut;
         }
         try {   // 执行命令并获取输出
-            System.out.println(pingCommand);
-            Process p = r.exec(pingCommand);
+            System.out.println( pingCommand );
+            Process p = r.exec( pingCommand );
             if (p == null) {
                 return false;
             }
-            in = new BufferedReader(new InputStreamReader(p.getInputStream()));   // 逐行检查输出,计算类似出现=23ms TTL=62字样的次数
+            in = new BufferedReader( new InputStreamReader( p.getInputStream() ) );   // 逐行检查输出,计算类似出现=23ms TTL=62字样的次数
             int connectedCount = 0;
             String line = null;
             while ((line = in.readLine()) != null) {
-                connectedCount += getCheckResult(line);
+                connectedCount += getCheckResult( line );
             }   // 如果出现类似=23ms TTL=62这样的字样,出现的次数=测试次数则返回真
             return connectedCount == pingTimes;
         } catch (Exception ex) {
@@ -40,20 +41,22 @@ public class Ping {
             }
         }
     }
+
     //若line含有=18ms TTL=16字样,说明已经ping通,返回1,否則返回0.
     private static int getCheckResult(String line) {  // System.out.println("控制台输出的结果为:"+line);
-        Pattern pattern = Pattern.compile("(\\d+ms)(\\s+)(TTL=\\d+)",    Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(line);
+        Pattern pattern = Pattern.compile( "(\\d+ms)(\\s+)(TTL=\\d+)", Pattern.CASE_INSENSITIVE );
+        Matcher matcher = pattern.matcher( line );
         while (matcher.find()) {
             return 1;
         }
         return 0;
     }
+
     public static void main(String[] args) throws Exception {
         String ipAddress = "www.cnblogs.com";
         long start = System.currentTimeMillis();
-        System.out.println(ping(ipAddress,1,1000));
-        System.out.println(System.currentTimeMillis() - start);
+        System.out.println( ping( ipAddress, 1, 1000 ) );
+        System.out.println( System.currentTimeMillis() - start );
 /*        ping02(ipAddress);
         System.out.println(ping(ipAddress, 5, 5000));*/
     }

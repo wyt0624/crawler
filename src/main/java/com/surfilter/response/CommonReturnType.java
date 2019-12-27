@@ -19,22 +19,23 @@ public class CommonReturnType {
     /**
      * 定义一个通用的创建方法
      */
-    public static CommonReturnType create(Object result){
-        return CommonReturnType.create(result,"success");
+    public static CommonReturnType create(Object result) {
+        return CommonReturnType.create( result, "success" );
     }
 
-    public static CommonReturnType create(Object result, String status){
+    public static CommonReturnType create(Object result, String status) {
         CommonReturnType type = new CommonReturnType();
-        type.setStatus(status);
-        type.setData(result);
+        type.setStatus( status );
+        type.setData( result );
         return type;
     }
-    public static CommonReturnType create(Object result, Integer status, Integer count){
+
+    public static CommonReturnType create(Object result, Integer status, Integer count) {
         CommonReturnType type = new CommonReturnType();
-        type.setCode(status);
-        type.setData(result);
-        type.setCount(count);
-        type.setStatus("success");
+        type.setCode( status );
+        type.setData( result );
+        type.setCount( count );
+        type.setStatus( "success" );
         return type;
     }
 

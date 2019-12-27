@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class DateTimeUtil {
     public static Timestamp dateToTimstamp(Long date) {
-        Timestamp fromTS1  = null;
+        Timestamp fromTS1 = null;
         try {
 //            SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat(
 //                    "yyyy-MM-dd hh:mm:ss" );

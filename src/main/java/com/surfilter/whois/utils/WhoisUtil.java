@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by dell on 2017/11/14.
  */
-public class WhoisUtil implements Serializable{
+public class WhoisUtil implements Serializable {
     private static String ipMapStr = "" +
             ".br.com       whois.centralnic.com\n" +
             ".cn.com       whois.centralnic.com\n" +
@@ -142,36 +142,36 @@ public class WhoisUtil implements Serializable{
             ".va           whois.ripe.net\n" +
             ".vg           whois.nic.vg\n" +
             ".ws           whois.website.ws";
-    private static List<Tuple2<String,String>> domainServerList = new ArrayList<Tuple2<String,String>>();
+    private static List<Tuple2<String, String>> domainServerList = new ArrayList<Tuple2<String, String>>();
 
-    static{
-        String[] lines = ipMapStr.split("\n");
-        for(String line:lines){
-            line = line.replaceAll("[\\s]+"," ");
-            String[] items = line.split(" ");
+    static {
+        String[] lines = ipMapStr.split( "\n" );
+        for (String line : lines) {
+            line = line.replaceAll( "[\\s]+", " " );
+            String[] items = line.split( " " );
             //domainServerList.add(new Tuple2<String, String>(items[0], items[1]));
         }
     }
 
-    public static WhoisModel queryWhois(String url){
+    public static WhoisModel queryWhois(String url) {
         WhoisModel whoisModel = null;
         WhoisClient whoisClient = null;
         String host = url;
-        try{
+        try {
             whoisClient = new WhoisClient();
-            WhoisStart.whoisMap.put( whoisClient,System.currentTimeMillis() );
-            if(host.startsWith("www.")){
-                host = host.substring(4);
+            WhoisStart.whoisMap.put( whoisClient, System.currentTimeMillis() );
+            if (host.startsWith( "www." )) {
+                host = host.substring( 4 );
             }
             String curDoaminServer = WhoisClient.DEFAULT_HOST;
-            whoisClient.connect(curDoaminServer);
-            String result = whoisClient.query(host);
-            whoisModel = WhoisParserFactory.getInstance().getParser().parseWhois(result);
-        }catch(Exception ex){
+            whoisClient.connect( curDoaminServer );
+            String result = whoisClient.query( host );
+            whoisModel = WhoisParserFactory.getInstance().getParser().parseWhois( result );
+        } catch (Exception ex) {
             ex.printStackTrace();
-        }finally{
+        } finally {
             WhoisStart.whoisMap.remove( whoisClient );
-            if(whoisClient != null){
+            if (whoisClient != null) {
                 try {
                     whoisClient.disconnect();
                 } catch (IOException e) {

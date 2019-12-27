@@ -12,11 +12,11 @@
             </if>
         </trim>
         values
-            <if test="wordList != null">
-                <foreach collection="wordList" item="item" index="index"  separator=",">
-                    (#{item},#{wordType})
-                </foreach>
-            </if>
+        <if test="wordList != null">
+            <foreach collection="wordList" item="item" index="index" separator=",">
+                (#{item},#{wordType})
+            </foreach>
+        </if>
     </insert>
 
     <select id="selectKeyWordByType" parameterType="java.lang.Integer" resultType="com.surfilter.util.Keyword">

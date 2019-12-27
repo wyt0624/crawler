@@ -15,6 +15,7 @@ public class NmapServiceImpl implements INmapService {
 
     @Autowired
     NmapMapper nmapMapper;
+
     @Override
     public List<Info> listNmap() {
         return nmapMapper.listNmap();
@@ -22,6 +23,6 @@ public class NmapServiceImpl implements INmapService {
 
     @Override
     public void updateListNmap(List<Info> list) {
-         nmapMapper.updateListNmap(list);
+        nmapMapper.updateListNmap( list );
     }
 }

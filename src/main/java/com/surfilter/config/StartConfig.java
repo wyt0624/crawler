@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration
 @Slf4j
 public class StartConfig {
-    public static final ExecutorService executorService = Executors.newFixedThreadPool(100);
-    public static AtomicInteger atomicInteger = new AtomicInteger(0);
+    public static final ExecutorService executorService = Executors.newFixedThreadPool( 100 );
+    public static AtomicInteger atomicInteger = new AtomicInteger( 0 );
     Set<String> qqset = new HashSet<>();
     @Autowired
     IWhiteListService whiteListService;
@@ -40,9 +40,10 @@ public class StartConfig {
     IIpService ipService;
     @Autowired
     RedisReceiver redisReceiver;
-//    @Autowired
+    //    @Autowired
 //    InfoMapper infoMapper;
-    private  static boolean isOSLinux;
+    private static boolean isOSLinux;
+
     @PostConstruct
     public void init() {//将白名单放到 redis中。
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
@@ -121,11 +122,11 @@ public class StartConfig {
     }
 
 
-    public static  boolean isOSLinux() {
+    public static boolean isOSLinux() {
         Properties prop = System.getProperties();
 
-        String os = prop.getProperty("os.name");
-        if (os != null && os.toLowerCase().indexOf("linux") > -1) {
+        String os = prop.getProperty( "os.name" );
+        if (os != null && os.toLowerCase().indexOf( "linux" ) > -1) {
             return true;
         } else {
             return false;
@@ -133,33 +134,35 @@ public class StartConfig {
     }
 
     private void initWhite() {
-        boolean flag =  stringRedisTemplate.opsForHash().getOperations().hasKey( redisKeyInfo.getWhileUrl() );
-        System.out.println(flag);
+        boolean flag = stringRedisTemplate.opsForHash().getOperations().hasKey( redisKeyInfo.getWhileUrl() );
+        System.out.println( flag );
         if (flag) {
             stringRedisTemplate.opsForHash().getOperations().delete( redisKeyInfo.getWhileUrl() );
         }
         List<WhiteUrl> list = whiteListService.listWhiteUrl();
-        Map<String,String> data = new HashMap<>();
-        int count = 0 ;
-        for (WhiteUrl wu :list) {
-            data.put( wu.getUrl(),wu.getName() );
-            count ++ ;
-            if ( count % 2000 == 0 ){
-                stringRedisTemplate.opsForHash().putAll(redisKeyInfo.getWhileUrl(),data);
+        Map<String, String> data = new HashMap<>();
+        int count = 0;
+        for (WhiteUrl wu : list) {
+            data.put( wu.getUrl(), wu.getName() );
+            count++;
+            if (count % 2000 == 0) {
+                stringRedisTemplate.opsForHash().putAll( redisKeyInfo.getWhileUrl(), data );
                 data.clear();
                 count = 0;
             }
         }
-        stringRedisTemplate.opsForHash().putAll(redisKeyInfo.getWhileUrl(),data);
+        stringRedisTemplate.opsForHash().putAll( redisKeyInfo.getWhileUrl(), data );
         data.clear();
         log.info( "加载白名单信息成功" );
     }
+
     private void initFile() {
-        File file = new File(baseInfo.getUrlReadPath());
+        File file = new File( baseInfo.getUrlReadPath() );
         if (!file.isDirectory()) {
             file.mkdirs();
         }
     }
+
     public Set<String> getQqset() {
         return qqset;
     }

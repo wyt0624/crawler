@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @MapperScan("com.surfilter.dao")
 public class CrawlerUtilApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CrawlerUtilApplication.class, args);
+        SpringApplication.run( CrawlerUtilApplication.class, args );
     }
 
 }

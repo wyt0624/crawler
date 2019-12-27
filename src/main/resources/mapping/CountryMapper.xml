@@ -4,12 +4,12 @@
 
     <insert id="insertCountry" parameterType="java.util.List" useGeneratedKeys="true">
         insert into country_info (
-          country_cn,
-          country_en,
-          province,
-          lng_x,
-          lng_y,
-          capital
+        country_cn,
+        country_en,
+        province,
+        lng_x,
+        lng_y,
+        capital
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -31,10 +31,10 @@
 
     </select>
     <update id="updateCountryCaptical" parameterType="java.util.Map">
-      update  country_info set capital = #{value} where country_cn = #{key}
+        update country_info set capital = #{value} where country_cn = #{key}
     </update>
-    <insert id="insertCountryInfo" parameterType="java.util.Map" >
-      insert country_info(country_cn,capital) values (#{key},#{value})
+    <insert id="insertCountryInfo" parameterType="java.util.Map">
+        insert country_info(country_cn,capital) values (#{key},#{value})
     </insert>
 
 

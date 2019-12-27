@@ -27,7 +27,7 @@ import java.util.List;
 @Service
 @Slf4j
 @Data
-public class CrawingServerImpl implements ICrawingService,Runnable{
+public class CrawingServerImpl implements ICrawingService, Runnable {
     @Autowired
     BaseInfo baseInfo;
     @Autowired
@@ -38,28 +38,31 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
     RedisKeyInfo redisKeyInfo;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public List<String> list = new ArrayList<>(  );
+    public List<String> list = new ArrayList<>();
+
     public CrawingServerImpl() {
     }
-    public CrawingServerImpl(List<String> list ){
+
+    public CrawingServerImpl(List<String> list) {
         this.list = list;
     }
+
     @Override
     public void run() {
         if (baseInfo == null) {
-            baseInfo = BeanContext.getApplicationContext().getBean(BaseInfo.class);
+            baseInfo = BeanContext.getApplicationContext().getBean( BaseInfo.class );
         }
-        if (startConfig == null ) {
-            startConfig = BeanContext.getApplicationContext().getBean(StartConfig.class);
+        if (startConfig == null) {
+            startConfig = BeanContext.getApplicationContext().getBean( StartConfig.class );
         }
         if (infoMapper == null) {
-            infoMapper = BeanContext.getApplicationContext().getBean(InfoMapper.class);
+            infoMapper = BeanContext.getApplicationContext().getBean( InfoMapper.class );
         }
         if (redisKeyInfo == null) {
-            redisKeyInfo = BeanContext.getApplicationContext().getBean(RedisKeyInfo.class);
+            redisKeyInfo = BeanContext.getApplicationContext().getBean( RedisKeyInfo.class );
         }
         if (stringRedisTemplate == null) {
-            stringRedisTemplate = BeanContext.getApplicationContext().getBean(StringRedisTemplate.class);
+            stringRedisTemplate = BeanContext.getApplicationContext().getBean( StringRedisTemplate.class );
         }
         try {
             List<Info> listInfo = new ArrayList<>();
@@ -93,14 +96,14 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
 
                             try {
                                 newUrl = HTTP + url;
-                                doc = HttpUtil.getDocByUrl(newUrl , 10000 );
-                            } catch ( Exception e ) {
+                                doc = HttpUtil.getDocByUrl( newUrl, 10000 );
+                            } catch (Exception e) {
                                 newUrl = HTTP + "www." + url;
                                 e.printStackTrace();
                             }
                             //url已经判断是带www.的域名了 不需要在爬
                             if (url.startsWith( "www." )) {
-                                throw  new  Exception();
+                                throw new Exception();
                             } else {
                                 doc = HttpUtil.getDocByUrl( newUrl, 10000 );
                                 html = doc.html();
@@ -116,7 +119,7 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                                     }
                                 }
                                 try {
-                                    doc = HttpUtil.getDocByUrl( ifreamUrl , 10000 );
+                                    doc = HttpUtil.getDocByUrl( ifreamUrl, 10000 );
                                     html += doc.html();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -127,34 +130,34 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                             String ip = IpUtil.getIpByDomain( url );
                             if (StringUtils.isNotBlank( ip )) {
                                 info.setIp( ip );
-    //                            Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
-    //                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
-    //                            for (String address : adds) {
-    //                                info.setAddress( address );
-    //                                break;
-    //                            }
+                                //                            Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
+                                //                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
+                                //                            for (String address : adds) {
+                                //                                info.setAddress( address );
+                                //                                break;
+                                //                            }
                                 //adds.clear();
                             }
-    //                        WhoisModel wm = WhoisUtil.queryWhois( url );
-    //                        if (wm != null) {
-    //                            if (DateTimeUtil.dateToTimstamp( wm.getCtime() ) != null && wm.getCtime() > 100000) {
-    //                                info.setCreationTime( DateTimeUtil.dateToTimstamp( wm.getCtime() ) );
-    //                            }
-    //                            if (DateTimeUtil.dateToTimstamp( wm.getEtime() ) != null && wm.getCtime() > 100000) {
-    //                                info.setExpireTime( DateTimeUtil.dateToTimstamp( wm.getEtime() ) );
-    //                            }
-    //                            if (StringUtils.isNotBlank( wm.getPhone() )) {
-    //                                info.setTel( wm.getPhone() );
-    //                            }
-    //                            if (StringUtils.isNotBlank( wm.getEmail() )) {
-    //                                info.setEmail( wm.getEmail() );
-    //                            }
-    //                            if (DateTimeUtil.dateToTimstamp( wm.getUtime() ) != null && wm.getCtime() > 100000) {
-    //                                info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
-    //                            }
-    //                        }
-    //                        info.setIsWhois( 1 );
-    //                        info.setPort( port );
+                            //                        WhoisModel wm = WhoisUtil.queryWhois( url );
+                            //                        if (wm != null) {
+                            //                            if (DateTimeUtil.dateToTimstamp( wm.getCtime() ) != null && wm.getCtime() > 100000) {
+                            //                                info.setCreationTime( DateTimeUtil.dateToTimstamp( wm.getCtime() ) );
+                            //                            }
+                            //                            if (DateTimeUtil.dateToTimstamp( wm.getEtime() ) != null && wm.getCtime() > 100000) {
+                            //                                info.setExpireTime( DateTimeUtil.dateToTimstamp( wm.getEtime() ) );
+                            //                            }
+                            //                            if (StringUtils.isNotBlank( wm.getPhone() )) {
+                            //                                info.setTel( wm.getPhone() );
+                            //                            }
+                            //                            if (StringUtils.isNotBlank( wm.getEmail() )) {
+                            //                                info.setEmail( wm.getEmail() );
+                            //                            }
+                            //                            if (DateTimeUtil.dateToTimstamp( wm.getUtime() ) != null && wm.getCtime() > 100000) {
+                            //                                info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
+                            //                            }
+                            //                        }
+                            //                        info.setIsWhois( 1 );
+                            //                        info.setPort( port );
                             title = new String( title.getBytes(), "UTF-8" );
                             if (title.length() > 499) {
                                 info.setTitle( title.substring( 0, 499 ) );
@@ -164,21 +167,21 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
 
                             //抓取网页上手机号码。
                             //String phones = StringUtil.phoneRegEx( html );
-    //                        if (phones.length() > 498) {
-    //                            info.setWebPhone( phones.substring( 0, 498 ) );
-    //                        } else {
-    //                            info.setWebPhone( phones );
-    //                        }
+                            //                        if (phones.length() > 498) {
+                            //                            info.setWebPhone( phones.substring( 0, 498 ) );
+                            //                        } else {
+                            //                            info.setWebPhone( phones );
+                            //                        }
                             //抓取网上的QQ号码。
-    //                        String qqs = StringUtil.qqRegEx( html, startConfig.getQqset() );
-    //                        if (StringUtils.isNotBlank( qqs )) {
-    //                            if (qqs.length() > 449) {
-    //                                info.setQq( qqs.substring( 0, 449 ) );
-    //                            } else {
-    //                                info.setQq( qqs );
-    //                            }
-    //                        }
-    //                        wm = null;
+                            //                        String qqs = StringUtil.qqRegEx( html, startConfig.getQqset() );
+                            //                        if (StringUtils.isNotBlank( qqs )) {
+                            //                            if (qqs.length() > 449) {
+                            //                                info.setQq( qqs.substring( 0, 449 ) );
+                            //                            } else {
+                            //                                info.setQq( qqs );
+                            //                            }
+                            //                        }
+                            //                        wm = null;
                         } catch (Exception e1) {
                             e1.printStackTrace();
                             info.setIsConn( 2 );
@@ -200,7 +203,7 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
                         info.setUrl( url );
                         listInfo.add( info );
                     }
-                }catch ( Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -219,10 +222,10 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
-                for (String stt: listAnaliseInfo) {
+                for (String stt : listAnaliseInfo) {
                     try {
                         stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), stt );
-                    } catch ( Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getAnaliseQueue(), stt );
                     }
@@ -234,9 +237,9 @@ public class CrawingServerImpl implements ICrawingService,Runnable{
         } finally {
             StartConfig.atomicInteger.decrementAndGet();
             String[] strings = new String[list.size()];
-            list.toArray(strings);
-            stringRedisTemplate.opsForSet().remove( redisKeyInfo.getCrawlerCache(),strings );
-            strings=null;
+            list.toArray( strings );
+            stringRedisTemplate.opsForSet().remove( redisKeyInfo.getCrawlerCache(), strings );
+            strings = null;
             list.clear();
         }
     }

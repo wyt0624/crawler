@@ -27,21 +27,22 @@ public class DomainUrlJob {
     UrlMapper urlMapper;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @Scheduled(cron = "${job.param.domainUrlJob}")
     private void initIp() {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
-        log.info("缓存失败,重新入缓存程序开启。");
-        List<String> listDomainUrl  = null;
-        for (;;) {
+        log.info( "缓存失败,重新入缓存程序开启。" );
+        List<String> listDomainUrl = null;
+        for (; ; ) {
             try {
                 List<DomainUrl> list = urlMapper.listCache();
-                if (list.size() == 0){
+                if (list.size() == 0) {
                     break;
                 }
-                listDomainUrl  = new ArrayList<>(  );
-                Iterator<DomainUrl> it =   list.iterator();
+                listDomainUrl = new ArrayList<>();
+                Iterator<DomainUrl> it = list.iterator();
                 while (it.hasNext()) {
                     DomainUrl domainUrl = it.next();
                     if (!stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getDomainUrl(), domainUrl.getUrl() )) {
@@ -54,10 +55,10 @@ public class DomainUrlJob {
                     }
                 }
                 try {
-                } catch ( Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (list.size()> 0) {
+                if (list.size() > 0) {
                     urlMapper.updateListCache( list );
                 }
                 log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{}" + list.size() );

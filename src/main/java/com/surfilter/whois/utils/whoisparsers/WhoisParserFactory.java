@@ -5,20 +5,21 @@ import java.io.Serializable;
 /**
  * Created by dell on 2017/11/14.
  */
-public class WhoisParserFactory implements Serializable{
+public class WhoisParserFactory implements Serializable {
     private static WhoisParserFactory whoisParserFactory = null;
 
-    private WhoisParserFactory(){}
+    private WhoisParserFactory() {
+    }
 
-    public static WhoisParserFactory getInstance(){
-        if(whoisParserFactory == null){
+    public static WhoisParserFactory getInstance() {
+        if (whoisParserFactory == null) {
             whoisParserFactory = new WhoisParserFactory();
         }
         return whoisParserFactory;
     }
 
-    public AParser getParser(){
-          return CrParser.getInstance();
+    public AParser getParser() {
+        return CrParser.getInstance();
 //        if(whoisServer.equals("whois.nic.it")){
 //            return ItParser.getInstance();
 //        }else if(whoisServer.equals("whois.nic.mx")){

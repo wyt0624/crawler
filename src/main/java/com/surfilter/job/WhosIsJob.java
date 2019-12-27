@@ -22,19 +22,20 @@ public class WhosIsJob {
     WhoisMapper whoisMapper;
     @Autowired
     WhoisServiceImpl whoisServiceImpl;
+
     @Scheduled(cron = "${job.param.whoisJob}")
     private void initWhois() {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_WHOIS)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_WHOIS )) {
             return;
         }
         long count = 0;
         long maxId = 0;
-        for (;;) {
-            List<Info> list = whoisMapper.listWhois(maxId);
-            if (list.size() <= 0 ) {
+        for (; ; ) {
+            List<Info> list = whoisMapper.listWhois( maxId );
+            if (list.size() <= 0) {
                 break;
             }
-            whoisServiceImpl.whoisRun(list);
+            whoisServiceImpl.whoisRun( list );
         }
     }
 

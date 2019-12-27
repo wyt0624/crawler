@@ -10,31 +10,32 @@ import java.util.regex.Pattern;
 
 /**
  * Domain: dehua.de
- Status: connect
+ * Status: connect
  */
-public class DeParser extends AParser{
-    private DeParser(){}
+public class DeParser extends AParser {
+    private DeParser() {
+    }
 
     public static DeParser instance = null;
 
-    public static DeParser getInstance(){
-        if(instance == null){
+    public static DeParser getInstance() {
+        if (instance == null) {
             instance = new DeParser();
         }
         return instance;
     }
 
     private final String DOMAINREG = "\\s*Domain:\\s*[^\\n]+";
-    private Pattern domainPattern = Pattern.compile(DOMAINREG);
+    private Pattern domainPattern = Pattern.compile( DOMAINREG );
 
     @Override
     public WhoisModel parseWhois(String whoisResponse) {
         WhoisModel whoisModel = new WhoisModel();
-        try{
-            String domain = getFieldValue(getMatchField(domainPattern, whoisResponse), ":");
-            whoisModel.setDomain(domain);
-            whoisModel.setIp( IpUtil.getIpByDomain(domain));
-        }catch(Exception ex){
+        try {
+            String domain = getFieldValue( getMatchField( domainPattern, whoisResponse ), ":" );
+            whoisModel.setDomain( domain );
+            whoisModel.setIp( IpUtil.getIpByDomain( domain ) );
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return whoisModel;

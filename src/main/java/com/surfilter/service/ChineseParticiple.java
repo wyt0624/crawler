@@ -6,6 +6,7 @@ import java.util.List;
 public interface ChineseParticiple {
     /**
      * 中文分词
+     *
      * @param words
      * @return
      */

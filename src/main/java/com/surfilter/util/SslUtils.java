@@ -12,14 +12,15 @@ public class SslUtils {
         sc.init( null, trustAllCerts, null );
         HttpsURLConnection.setDefaultSSLSocketFactory( sc.getSocketFactory() );
     }
-    public static void ignoreSsl() throws Exception{
+
+    public static void ignoreSsl() throws Exception {
         HostnameVerifier hv = new HostnameVerifier() {
-                public boolean verify(String urlHostName, SSLSession session) {
-                    System.out.println("Warning: URL Host: " + urlHostName + " vs. " + session.getPeerHost());
-                    return true;
-                }
+            public boolean verify(String urlHostName, SSLSession session) {
+                System.out.println( "Warning: URL Host: " + urlHostName + " vs. " + session.getPeerHost() );
+                return true;
+            }
         };
         trustAllHttpsCertificates();
-        HttpsURLConnection.setDefaultHostnameVerifier(hv);
+        HttpsURLConnection.setDefaultHostnameVerifier( hv );
     }
 }

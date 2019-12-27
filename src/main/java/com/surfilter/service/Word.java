@@ -8,6 +8,7 @@ public interface Word {
 
     /**
      * 单词分类入库
+     *
      * @param word
      * @param type
      */

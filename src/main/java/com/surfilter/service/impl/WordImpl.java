@@ -17,9 +17,8 @@ public class WordImpl implements Word {
     private WordMapper wordMapper;
 
 
-
     @Override
     public void insertWord(List<String> wordList, int type) {
-        wordMapper.insertWord(wordList,type);
+        wordMapper.insertWord( wordList, type );
     }
 }

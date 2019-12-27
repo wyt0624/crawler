@@ -26,26 +26,26 @@ public class RedisReceiver {
     StringRedisTemplate stringRedisTemplate;
     List<String> list = new ArrayList<String>();
 
-    public void init () {
+    public void init() {
         try {
             Thread.sleep( 8000 );
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (stringRedisTemplate == null) {
-            stringRedisTemplate = BeanContext.getApplicationContext().getBean(StringRedisTemplate.class);
+            stringRedisTemplate = BeanContext.getApplicationContext().getBean( StringRedisTemplate.class );
         }
-        if (redisKeyInfo == null ) {
-            redisKeyInfo = BeanContext.getApplicationContext().getBean(RedisKeyInfo.class);
+        if (redisKeyInfo == null) {
+            redisKeyInfo = BeanContext.getApplicationContext().getBean( RedisKeyInfo.class );
         }
         if (crawingService == null) {
-            crawingService = BeanContext.getApplicationContext().getBean(CrawingServerImpl.class);
+            crawingService = BeanContext.getApplicationContext().getBean( CrawingServerImpl.class );
         }
 
         log.info( "消费者初始化成功" );
-        for(;; ) {
+        for (; ; ) {
             try {
-                log.info( "线程总数量为{}" ,StartConfig.atomicInteger.get() );
+                log.info( "线程总数量为{}", StartConfig.atomicInteger.get() );
                 if (StartConfig.atomicInteger.get() > 99) {
                     try {
                         Thread.sleep( 20000 );
@@ -66,7 +66,7 @@ public class RedisReceiver {
                     List<String> list = JSONArray.parseArray( message, String.class );
                     if (list.size() > 0) {
                         String[] strings = new String[list.size()];
-                        list.toArray(strings);
+                        list.toArray( strings );
                         stringRedisTemplate.opsForSet().add( redisKeyInfo.getCrawlerCache(), strings );
                         strings = null;
 
@@ -84,11 +84,12 @@ public class RedisReceiver {
                         e.printStackTrace();
                     }
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
     public void receiveMessage(String message) {
 //        List<String> list= JSONArray.parseArray(message,String.class);
 //        if (list.size()>0) {

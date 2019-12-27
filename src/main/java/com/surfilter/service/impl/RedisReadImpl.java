@@ -38,7 +38,7 @@ public class RedisReadImpl implements RedisRead {
 
     @Override
     public boolean readRedis(String key) {
-        long len = redisUtil.lGetListSize(key);
+        long len = redisUtil.lGetListSize( key );
         boolean flag = false;
         if (len > 0) {
             flag = true;
@@ -53,18 +53,19 @@ public class RedisReadImpl implements RedisRead {
      */
     @Override
     public void startCrawler(String key) {
-        String ips = redisTemplate.opsForList().rightPop(key,1L, TimeUnit.SECONDS);
-        Set<String> urlList = new Gson().fromJson(ips, new TypeToken<Set<String>>(){}.getType());
+        String ips = redisTemplate.opsForList().rightPop( key, 1L, TimeUnit.SECONDS );
+        Set<String> urlList = new Gson().fromJson( ips, new TypeToken<Set<String>>() {
+        }.getType() );
         BufferedWriter bw = null;
         for (String url : urlList) {
             //爬取当前url
             try {
-                Set<WordDO> set = getWebMessageWord(url);
+                Set<WordDO> set = getWebMessageWord( url );
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 try {
-                    if(bw != null) {
+                    if (bw != null) {
                         bw.close();
                     }
                 } catch (IOException e) {
@@ -77,26 +78,24 @@ public class RedisReadImpl implements RedisRead {
     }
 
 
-
     @Override
     public Set<WordDO> getWebMessageWord(String url) {
         Set<WordDO> set = new HashSet<>();
-        String text = getWebMessageText(url);
+        String text = getWebMessageText( url );
         //分词 去除特殊符号
         List<String> wordList = null;
         try {
-            wordList = chineseParticiple.getChineseWord(StringUtil.RemoveSymbol(text));
+            wordList = chineseParticiple.getChineseWord( StringUtil.RemoveSymbol( text ) );
         } catch (Exception e) {
             e.printStackTrace();
         }
         for (String word : wordList) {
             WordDO wordDO = new WordDO();
-            wordDO.setWord(word);
-            set.add(wordDO);
+            wordDO.setWord( word );
+            set.add( wordDO );
         }
         return set;
     }
-
 
 
     @Override
@@ -104,8 +103,8 @@ public class RedisReadImpl implements RedisRead {
         HttpUtil.trustEveryone();
         String text = null;
         //判断端口 转换url
-        String newUrl = HttpUtil.getNewUrl(url);
-        Document doc = HttpUtil.getPageContent(newUrl);
+        String newUrl = HttpUtil.getNewUrl( url );
+        Document doc = HttpUtil.getPageContent( newUrl );
         //获取所有节点元素
 //        Elements elementsTitle = doc.select("head > title");
 //        Elements elementsMeta = doc.select("head > meta");
@@ -122,12 +121,9 @@ public class RedisReadImpl implements RedisRead {
     }
 
     public static void main(String[] args) {
-        String text = new RedisReadImpl().getWebMessageText("https://www.baidu.com/");
-        System.out.println(text);
+        String text = new RedisReadImpl().getWebMessageText( "https://www.baidu.com/" );
+        System.out.println( text );
     }
-
-
-
 
 
 }

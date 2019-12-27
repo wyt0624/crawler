@@ -16,8 +16,9 @@ public class IpserviceServiceImpl implements IIpService {
      */
     @Autowired
     private IpMapper ipMapper;
+
     @Override
     public List<Ip> listIps(int count) {
-        return ipMapper.ListIps(count);
+        return ipMapper.ListIps( count );
     }
 }

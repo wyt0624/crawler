@@ -15,20 +15,20 @@ import java.io.IOException;
 
 public class HtmlUnitUtil {
 
-    private static WebClient webClient = new WebClient(BrowserVersion.CHROME);
+    private static WebClient webClient = new WebClient( BrowserVersion.CHROME );
 
     public static String getHtml(String url) {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.setJavaScriptTimeout(1000000);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setTimeout(100000);
-        webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        webClient.getOptions().setJavaScriptEnabled( true );
+        webClient.setJavaScriptTimeout( 1000000 );
+        webClient.getOptions().setCssEnabled( false );
+        webClient.getOptions().setTimeout( 100000 );
+        webClient.getOptions().setUseInsecureSSL( true );
+        webClient.getOptions().setJavaScriptEnabled( false );
+        webClient.setAjaxController( new NicelyResynchronizingAjaxController() );
         String xml = null;
         try {
-            HtmlPage htmlPage = webClient.getPage(url);
-            DomNode domNode = htmlPage.querySelector("head > meta");
+            HtmlPage htmlPage = webClient.getPage( url );
+            DomNode domNode = htmlPage.querySelector( "head > meta" );
             String doc = domNode.asText();
             String textContent = htmlPage.getPage().getTextContent();
             xml = htmlPage.asText();
@@ -45,6 +45,6 @@ public class HtmlUnitUtil {
     }
 
     public static void main(String[] args) {
-        getHtml(HttpUtil.getNewUrl("http://4aaxx.com/"));
+        getHtml( HttpUtil.getNewUrl( "http://4aaxx.com/" ) );
     }
 }

@@ -16,15 +16,15 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Service
 @Slf4j
-public class WhoisServiceImpl{
+public class WhoisServiceImpl {
     @Autowired
     WhoisMapper whoisMapper;
 
     public void whoisRun(List<Info> list) {
         if (whoisMapper == null) {
-            whoisMapper = BeanContext.getApplicationContext().getBean( WhoisMapper.class);
+            whoisMapper = BeanContext.getApplicationContext().getBean( WhoisMapper.class );
         }
-        for (Info info:list) {
+        for (Info info : list) {
             try {
                 WhoisModel wm = WhoisUtil.queryWhois( info.getUrl() );
                 if (wm != null) {
@@ -44,13 +44,13 @@ public class WhoisServiceImpl{
                         info.setLastUpdateTime( DateTimeUtil.dateToTimstamp( wm.getUtime() ) );
                     }
                 }
-                log.info( "成功处理whois{} ",info.getUrl() );
-            }catch (Exception e) {
+                log.info( "成功处理whois{} ", info.getUrl() );
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             info.setIsWhois( 1 );
         }
-        whoisMapper.updatelistWhois(list);
-        log.info( "成功处理whois{}条",list.size() );
+        whoisMapper.updatelistWhois( list );
+        log.info( "成功处理whois{}条", list.size() );
     }
 }

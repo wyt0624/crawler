@@ -18,26 +18,27 @@ public class WebMagicImpl implements WebMagic {
 
     @Override
     public void webMagicCrawler(String url) {
-        Spider.create(new process()).addUrl(url).thread(5).run();
+        Spider.create( new process() ).addUrl( url ).thread( 5 ).run();
     }
 
     public static void main(String[] args) {
-        new WebMagicImpl().webMagicCrawler("http://github.com/code4craft");
+        new WebMagicImpl().webMagicCrawler( "http://github.com/code4craft" );
     }
-    public class process implements PageProcessor{
 
-        private Site site = Site.me().setRetryTimes(3).setSleepTime(100);
+    public class process implements PageProcessor {
+
+        private Site site = Site.me().setRetryTimes( 3 ).setSleepTime( 100 );
 
         @Override
         public void process(Page page) {
-            page.addTargetRequests(page.getHtml().links().regex("(http://github\\.com/\\w+/\\w+)").all());
-            page.putField("author", page.getUrl().regex("http://github\\.com/(\\w+)/.*").toString());
-            page.putField("name", page.getHtml().xpath("//h1[@class='entry-title public']/strong/a/text()").toString());
-            if (page.getResultItems().get("name")==null){
+            page.addTargetRequests( page.getHtml().links().regex( "(http://github\\.com/\\w+/\\w+)" ).all() );
+            page.putField( "author", page.getUrl().regex( "http://github\\.com/(\\w+)/.*" ).toString() );
+            page.putField( "name", page.getHtml().xpath( "//h1[@class='entry-title public']/strong/a/text()" ).toString() );
+            if (page.getResultItems().get( "name" ) == null) {
                 //skip this page
-                page.setSkip(true);
+                page.setSkip( true );
             }
-            page.putField("readme", page.getHtml().xpath("//div[@id='readme']/tidyText()"));
+            page.putField( "readme", page.getHtml().xpath( "//div[@id='readme']/tidyText()" ) );
         }
 
         @Override

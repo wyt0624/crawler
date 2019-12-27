@@ -9,6 +9,6 @@ public interface WordMapper {
 
     public void insertWord(@Param("wordList") List<String> wordDOList, @Param("wordType") int wordType);
 
-    public List<Keyword> selectKeyWordByType(@Param("word_type")int type);
+    public List<Keyword> selectKeyWordByType(@Param("word_type") int type);
 
 }

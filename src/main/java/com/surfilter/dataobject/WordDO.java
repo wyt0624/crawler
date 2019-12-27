@@ -3,7 +3,7 @@ package com.surfilter.dataobject;
 import lombok.Data;
 
 @Data
-public class WordDO{
+public class WordDO {
 
     private String word;
 

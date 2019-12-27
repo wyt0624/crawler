@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WhoisStart {
     @Autowired
     BaseInfo baseInfo;
-    public  static Map<WhoisClient,Long> whoisMap = new ConcurrentHashMap<WhoisClient,Long>();
+    public static Map<WhoisClient, Long> whoisMap = new ConcurrentHashMap<WhoisClient, Long>();
 
     @PostConstruct
     public void init() {//将白名单放到 redis中。
@@ -24,12 +24,12 @@ public class WhoisStart {
         Thread thread = new Thread( new Runnable() {
             @Override
             public void run() {
-                for(;;) {
-                    Iterator<Map.Entry<WhoisClient,Long>> it = WhoisStart.whoisMap.entrySet().iterator();
-                    while (it.hasNext() ) {
-                        Map.Entry<WhoisClient,Long>  entry = it.next();
-                        Long  value = entry.getValue();
-                        if ((System.currentTimeMillis() - value) > 5000 ) {
+                for (; ; ) {
+                    Iterator<Map.Entry<WhoisClient, Long>> it = WhoisStart.whoisMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<WhoisClient, Long> entry = it.next();
+                        Long value = entry.getValue();
+                        if ((System.currentTimeMillis() - value) > 5000) {
                             WhoisClient wc = entry.getKey();
                             try {
                                 if (wc != null) {

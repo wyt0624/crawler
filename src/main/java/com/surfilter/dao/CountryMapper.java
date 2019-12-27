@@ -11,7 +11,7 @@ public interface CountryMapper {
 
     int getCount(@Param("en") String value);
 
-    void updateCountryCaptical(Map<String,String> map);
+    void updateCountryCaptical(Map<String, String> map);
 
-    void insertCountryInfo(Map<String,String> map);
+    void insertCountryInfo(Map<String, String> map);
 }

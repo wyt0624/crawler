@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface WhiteUrlMapper {
     List<WhiteUrl> listWhiteUrl();
+
     void insertWhiteUrl(List<WhiteUrl> list);
 }

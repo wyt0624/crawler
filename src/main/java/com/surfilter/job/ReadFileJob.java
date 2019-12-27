@@ -15,9 +15,10 @@ public class ReadFileJob {
     BaseInfo baseInfo;
     @Autowired
     FileRead fileRead;
-    @Scheduled( fixedRate = 1000 * 60,initialDelay = 10000)
+
+    @Scheduled(fixedRate = 1000 * 60, initialDelay = 10000)
     private void readFile() throws InterruptedException {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
         log.info( "读取文件程序启动" );

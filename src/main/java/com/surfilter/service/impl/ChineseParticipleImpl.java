@@ -14,10 +14,9 @@ public class ChineseParticipleImpl implements ChineseParticiple {
     @Override
     public List<String> getChineseWord(String words) {
         JiebaSegmenter segmenter = new JiebaSegmenter();
-        List<String> wordList = segmenter.sentenceProcess(words);
+        List<String> wordList = segmenter.sentenceProcess( words );
         return wordList;
     }
-
 
 
 }

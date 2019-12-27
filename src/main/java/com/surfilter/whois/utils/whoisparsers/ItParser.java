@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 /****************************
-
  *********************************************************************
  * Please note that the following result could be a subgroup of      *
  * the data contained in the database.                               *
@@ -69,12 +68,14 @@ import java.util.regex.Pattern;
 
 
  */
-public class ItParser extends AParser{
-    private ItParser(){}
+public class ItParser extends AParser {
+    private ItParser() {
+    }
+
     private static ItParser instance = null;
 
-    public static ItParser getInstance(){
-        if(instance == null){
+    public static ItParser getInstance() {
+        if (instance == null) {
             instance = new ItParser();
         }
         return instance;
@@ -85,29 +86,29 @@ public class ItParser extends AParser{
     private final String ORGNIZATIONREG = "\\s*Organization:\\s*[^\\n]+";
     private final String CTIMEREG = "\\s*Created:\\s*[^\\n]+";
     private final String UTIMEREG = "\\s*Last Update:\\s*[^\\n]+";
-    private Pattern domainPattern = Pattern.compile(DOMAINREG);
-    private Pattern contactPattern = Pattern.compile(CONTACTSREG);
-    private Pattern orgnizationPattern = Pattern.compile(ORGNIZATIONREG);
-    private Pattern ctimePattern = Pattern.compile(CTIMEREG);
-    private Pattern utimePattern = Pattern.compile(UTIMEREG);
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private Pattern domainPattern = Pattern.compile( DOMAINREG );
+    private Pattern contactPattern = Pattern.compile( CONTACTSREG );
+    private Pattern orgnizationPattern = Pattern.compile( ORGNIZATIONREG );
+    private Pattern ctimePattern = Pattern.compile( CTIMEREG );
+    private Pattern utimePattern = Pattern.compile( UTIMEREG );
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
     @Override
     public WhoisModel parseWhois(String whoisResponse) {
         WhoisModel whoisModel = new WhoisModel();
-        try{
-            String domain = getFieldValue(getMatchField(domainPattern, whoisResponse), ":");
-            whoisModel.setDomain(domain);
-            String contacts = getFieldValue(getMatchField(contactPattern, whoisResponse), ":");
-            whoisModel.setContacts(contacts);
-            String orgnization = getFieldValue(getMatchField(orgnizationPattern, whoisResponse), ":");
-            whoisModel.setOrgnization(orgnization);
-            String ctime = getFieldValue(getMatchField(ctimePattern, whoisResponse), ":");
-            whoisModel.setCtime(simpleDateFormat.parse(ctime.trim()).getTime());
-            String utime = getFieldValue(getMatchField(utimePattern, whoisResponse), ":");
-            whoisModel.setUtime(simpleDateFormat.parse(utime.trim()).getTime());
-            whoisModel.setIp( IpUtil.getIpByDomain(domain));
-        }catch(Exception ex){
+        try {
+            String domain = getFieldValue( getMatchField( domainPattern, whoisResponse ), ":" );
+            whoisModel.setDomain( domain );
+            String contacts = getFieldValue( getMatchField( contactPattern, whoisResponse ), ":" );
+            whoisModel.setContacts( contacts );
+            String orgnization = getFieldValue( getMatchField( orgnizationPattern, whoisResponse ), ":" );
+            whoisModel.setOrgnization( orgnization );
+            String ctime = getFieldValue( getMatchField( ctimePattern, whoisResponse ), ":" );
+            whoisModel.setCtime( simpleDateFormat.parse( ctime.trim() ).getTime() );
+            String utime = getFieldValue( getMatchField( utimePattern, whoisResponse ), ":" );
+            whoisModel.setUtime( simpleDateFormat.parse( utime.trim() ).getTime() );
+            whoisModel.setIp( IpUtil.getIpByDomain( domain ) );
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return whoisModel;

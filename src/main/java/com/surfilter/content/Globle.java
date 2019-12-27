@@ -4,16 +4,16 @@ public class Globle {
     /**
      * 正常模式
      */
-    public static String SYS_ROLE_NOMAL="nomal";
+    public static String SYS_ROLE_NOMAL = "nomal";
 
     /**
      * nmap模式
      */
-    public static String SYS_ROLE_NMAP="nmap";
+    public static String SYS_ROLE_NMAP = "nmap";
 
     /**
      * whois模式。
      */
-    public static String SYS_ROLE_WHOIS="whois";
+    public static String SYS_ROLE_WHOIS = "whois";
 
 }

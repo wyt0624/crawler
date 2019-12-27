@@ -13,12 +13,13 @@ import java.util.List;
 public class Basic extends BaseSeimiCrawler {
 
 
-   // @Scheduled(cron = "0/5 * * * * ?")
-    public void callByCron(){
-        logger.info("我是一个根据cron表达式执行的调度器，5秒一次");
+    // @Scheduled(cron = "0/5 * * * * ?")
+    public void callByCron() {
+        logger.info( "我是一个根据cron表达式执行的调度器，5秒一次" );
         // 可定时发送一个Request
-         push(Request.build(startUrls()[0],"start").setSkipDuplicateFilter(true));
+        push( Request.build( startUrls()[0], "start" ).setSkipDuplicateFilter( true ) );
     }
+
     public String[] urls;
 
     @Override
@@ -29,23 +30,23 @@ public class Basic extends BaseSeimiCrawler {
     @Override
     public void start(Response response) {
         byte[] data = response.getData();
-        System.out.println(data.toString());
+        System.out.println( data.toString() );
         JXDocument doc = response.document();
         try {
-            List<Object> urls = doc.sel("");
-            logger.info("{}", urls.size());
-            for (Object s:urls){
-                push(Request.build(s.toString(),Basic::getTitle));
+            List<Object> urls = doc.sel( "" );
+            logger.info( "{}", urls.size() );
+            for (Object s : urls) {
+                push( Request.build( s.toString(), Basic::getTitle ) );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void getTitle(Response response){
+    public void getTitle(Response response) {
         JXDocument doc = response.document();
         try {
-            logger.info("url:{} {}", response.getUrl(), doc.sel("//h1[@class='postTitle']/a/text()|//a[@id='cb_post_title_url']/text()"));
+            logger.info( "url:{} {}", response.getUrl(), doc.sel( "//h1[@class='postTitle']/a/text()|//a[@id='cb_post_title_url']/text()" ) );
             //do something
         } catch (Exception e) {
             e.printStackTrace();

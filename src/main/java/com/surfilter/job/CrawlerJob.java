@@ -27,47 +27,48 @@ public class CrawlerJob {
     UrlMapper urlMapper;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @Scheduled(cron = "${job.param.crawlerJob}")
     private void initIp() {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
         log.info( "丢失数据重新入库程序开启。" );
-        long count =  stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue());
+        long count = stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue() );
         if (stringRedisTemplate.opsForList().size( redisKeyInfo.getCrawlerQueue() ) > 0) {
             return;
         }
-        if (stringRedisTemplate.hasKey(  redisKeyInfo.getCrawlerCache() )) {
+        if (stringRedisTemplate.hasKey( redisKeyInfo.getCrawlerCache() )) {
             return;
         }
         urlMapper.updateListCrawlerStatus();
-        List<String> listDomainUrl  = null;
-        for (;;) {
+        List<String> listDomainUrl = null;
+        for (; ; ) {
             try {
                 List<DomainUrl> list = urlMapper.listCrawler();
-                if (list.size() == 0){
+                if (list.size() == 0) {
                     break;
                 }
-                listDomainUrl  = new ArrayList<>(  );
-                for (DomainUrl domainUrl: list ){
-                    if ( stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getCrawlerCache(),domainUrl.getUrl() )){
+                listDomainUrl = new ArrayList<>();
+                for (DomainUrl domainUrl : list) {
+                    if (stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getCrawlerCache(), domainUrl.getUrl() )) {
                         continue;
                     }
-                    if (stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getWhileUrl(),domainUrl.getUrl()  )) {
+                    if (stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getWhileUrl(), domainUrl.getUrl() )) {
                         continue;
                     }
                     listDomainUrl.add( domainUrl.getUrl() );
                 }
-                if (listDomainUrl.size() > 0 ) {
+                if (listDomainUrl.size() > 0) {
                     String json = JSON.toJSONString( listDomainUrl );
                     stringRedisTemplate.opsForList().rightPush( redisKeyInfo.getCrawlerQueue(), json );
                 }
                 try {
-                } catch ( Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                urlMapper.updateListCrawler(list);
-                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{} 条" , listDomainUrl.size() );
+                urlMapper.updateListCrawler( list );
+                log.info( "域名入爬虫队列失败的重新进入队列-成功进入队列 :{} 条", listDomainUrl.size() );
                 listDomainUrl.clear();
             } catch (Exception e) {
                 e.printStackTrace();

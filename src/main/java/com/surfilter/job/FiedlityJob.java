@@ -28,32 +28,33 @@ public class FiedlityJob {
     IIpService ipService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @Scheduled(cron = "${job.param.fiedlityJob}")
     private void initIp() {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
         log.info( "开始加载村真ip到redis" );
         int count = 0;
-        for (;;) {
-            List<Ip> list = ipService.listIps(count);
-            if (list.size()> 0){
+        for (; ; ) {
+            List<Ip> list = ipService.listIps( count );
+            if (list.size() > 0) {
                 Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
-                for (Ip ip:list){
-                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>(ip.getAddress() +
-                            "_" + ip.getSpecificAddress(), (double)ip.getEndIpNum());
+                for (Ip ip : list) {
+                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>( ip.getAddress() +
+                            "_" + ip.getSpecificAddress(), (double) ip.getEndIpNum() );
                     tuples.add( tuple );
                 }
-                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp() ,tuples);
+                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp(), tuples );
                 tuples.clear();
                 tuples = null;
             }
-            if (list.size()< 10000) {
+            if (list.size() < 10000) {
                 count += list.size();
-                log.info( "存真ip入库成功，总条数：{}",count);
+                log.info( "存真ip入库成功，总条数：{}", count );
                 break;
             } else {
-                log.info( "存真ip入库成功入缓存，数量：{}",count);
+                log.info( "存真ip入库成功入缓存，数量：{}", count );
                 count += 10000;
             }
         }

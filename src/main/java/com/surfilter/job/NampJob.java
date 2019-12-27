@@ -21,20 +21,21 @@ public class NampJob {
     BaseInfo baseInfo;
     @Autowired
     INmapService nmapService;
+
     @Scheduled(cron = "${job.param.whoisJob}")
     private void initWhois() {
-        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NMAP)) {
+        if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NMAP )) {
             return;
         }
         long count = 0;
-        for (;;) {
+        for (; ; ) {
             List<Info> list = nmapService.listNmap();
-            if (list.size() <= 0 ) {
+            if (list.size() <= 0) {
                 log.info( "没有要执行的nmap数据" );
                 break;
             }
 
-            for (Info  info: list)  {
+            for (Info info : list) {
                 try {
                     StringUtil.nmapOfPort( info, operatingSystemType );
                     log.info( "nmap 域名:{},的结果为:{}", info.getUrl(), info.getPort() );
@@ -46,8 +47,8 @@ public class NampJob {
             //修改数据库状态。
             try {
                 nmapService.updateListNmap( list );
-                count  += list.size();
-                log.info( "执行nmap端口查询:{} 条" ,count );
+                count += list.size();
+                log.info( "执行nmap端口查询:{} 条", count );
             } catch (Exception e) {
                 e.printStackTrace();
             }

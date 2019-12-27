@@ -29,8 +29,4 @@ public class MiTM implements TrustManager, X509TrustManager {
     }
 
 
-
-
-
-
 }

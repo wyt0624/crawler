@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by dell on 2017/11/14.
  */
-public class WhoisModel implements Serializable{
+public class WhoisModel implements Serializable {
     private String domain;
     private String ip;
     private String contacts;
@@ -16,6 +16,7 @@ public class WhoisModel implements Serializable{
     private long utime;
     private long etime;
     private String orgnization;
+
     public long getEtime() {
         return etime;
     }
@@ -23,6 +24,7 @@ public class WhoisModel implements Serializable{
     public void setEtime(long etime) {
         this.etime = etime;
     }
+
     public String getDomain() {
         return domain;
     }
@@ -87,25 +89,25 @@ public class WhoisModel implements Serializable{
         this.orgnization = orgnization;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sb.append("domain:"+(getDomain()==null?"":getDomain())+"\n");
-        sb.append("contacts:"+(getContacts()==null?"":getContacts())+"\n");
-        sb.append("orgnization:"+(getOrgnization()==null?"":getOrgnization())+"\n");
-        sb.append("ip:"+(getIp()==null?"":getIp())+"\n");
-        if(getCtime() != 0){
-            sb.append("ctime:"+simpleDateFormat.format(getCtime()) + "\n");
-        }else{
-            sb.append("ctime:\n");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+        sb.append( "domain:" + (getDomain() == null ? "" : getDomain()) + "\n" );
+        sb.append( "contacts:" + (getContacts() == null ? "" : getContacts()) + "\n" );
+        sb.append( "orgnization:" + (getOrgnization() == null ? "" : getOrgnization()) + "\n" );
+        sb.append( "ip:" + (getIp() == null ? "" : getIp()) + "\n" );
+        if (getCtime() != 0) {
+            sb.append( "ctime:" + simpleDateFormat.format( getCtime() ) + "\n" );
+        } else {
+            sb.append( "ctime:\n" );
         }
-        if(getUtime() != 0){
-            sb.append("utime:"+simpleDateFormat.format(getUtime())+"\n");
-        }else{
-            sb.append("utime:\n");
+        if (getUtime() != 0) {
+            sb.append( "utime:" + simpleDateFormat.format( getUtime() ) + "\n" );
+        } else {
+            sb.append( "utime:\n" );
         }
-        sb.append("email:"+(getEmail()==null?"":getEmail())+"\n");
-        sb.append("phone:"+(getPhone()==null?"":getPhone()) + "\n");
+        sb.append( "email:" + (getEmail() == null ? "" : getEmail()) + "\n" );
+        sb.append( "phone:" + (getPhone() == null ? "" : getPhone()) + "\n" );
         return sb.toString();
     }
 }

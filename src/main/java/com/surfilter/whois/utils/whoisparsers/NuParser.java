@@ -40,13 +40,14 @@ import java.util.regex.Pattern;
  status:           ok
  registrar:        NuNames.nu
  */
-public class NuParser extends AParser{
-    private NuParser(){}
+public class NuParser extends AParser {
+    private NuParser() {
+    }
 
     private static NuParser instance = null;
 
-    public static NuParser getInstance(){
-        if(instance == null){
+    public static NuParser getInstance() {
+        if (instance == null) {
             instance = new NuParser();
         }
         return instance;
@@ -56,26 +57,26 @@ public class NuParser extends AParser{
     private final String CONTACTSREG = "\\s*admin\\-c:\\s*[^\\n]+";
     private final String CTIMEREG = "\\s*created:\\s*[^\\n]+";
     private final String UTIMEREG = "\\s*modified:\\s*[^\\n]+";
-    private Pattern domainPattern = Pattern.compile(DOMAINREG);
-    private Pattern contactsPattern = Pattern.compile(CONTACTSREG);
-    private Pattern ctimePattern = Pattern.compile(CTIMEREG);
-    private Pattern utimePattern = Pattern.compile(UTIMEREG);
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private Pattern domainPattern = Pattern.compile( DOMAINREG );
+    private Pattern contactsPattern = Pattern.compile( CONTACTSREG );
+    private Pattern ctimePattern = Pattern.compile( CTIMEREG );
+    private Pattern utimePattern = Pattern.compile( UTIMEREG );
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
     @Override
     public WhoisModel parseWhois(String whoisResponse) {
         WhoisModel whoisModel = new WhoisModel();
-        try{
-            String domain = getFieldValue(getMatchField(domainPattern, whoisResponse), ":");
-            whoisModel.setDomain(domain);
-            String contacts = getFieldValue(getMatchField(contactsPattern, whoisResponse), ":");
-            whoisModel.setContacts(contacts);
-            String ctime = getFieldValue(getMatchField(ctimePattern, whoisResponse), ":");
-            whoisModel.setCtime(simpleDateFormat.parse(ctime).getTime());
-            String utime = getFieldValue(getMatchField(utimePattern, whoisResponse), ":");
-            whoisModel.setUtime(simpleDateFormat.parse(utime).getTime());
-            whoisModel.setIp( IpUtil.getIpByDomain(domain));
-        }catch(Exception ex){
+        try {
+            String domain = getFieldValue( getMatchField( domainPattern, whoisResponse ), ":" );
+            whoisModel.setDomain( domain );
+            String contacts = getFieldValue( getMatchField( contactsPattern, whoisResponse ), ":" );
+            whoisModel.setContacts( contacts );
+            String ctime = getFieldValue( getMatchField( ctimePattern, whoisResponse ), ":" );
+            whoisModel.setCtime( simpleDateFormat.parse( ctime ).getTime() );
+            String utime = getFieldValue( getMatchField( utimePattern, whoisResponse ), ":" );
+            whoisModel.setUtime( simpleDateFormat.parse( utime ).getTime() );
+            whoisModel.setIp( IpUtil.getIpByDomain( domain ) );
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return whoisModel;

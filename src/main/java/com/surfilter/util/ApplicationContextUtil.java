@@ -17,11 +17,11 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     }
 
     public static Object getBean(String beanName) {
-        return applicationContext.getBean(beanName);
+        return applicationContext.getBean( beanName );
     }
 
     //通过class获取Bean.
-    public static <T> T getBean(Class<T> clazz){
-        return getApplicationContext().getBean(clazz);
+    public static <T> T getBean(Class<T> clazz) {
+        return getApplicationContext().getBean( clazz );
     }
 }

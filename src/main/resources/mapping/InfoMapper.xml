@@ -3,63 +3,63 @@
 <mapper namespace="com.surfilter.dao.InfoMapper">
     <insert id="addInfo" parameterType="info" useGeneratedKeys="true">
         insert into info (
-            url,
-            is_conn,
-            port,
-            email,
-            tel,
-            creation_time,
-            expire_time,
-            company,
-            last_update_time,
-            file_name,
-            ip,
-            web_phone,
-            qq,
-            wx,
-            address,
-            title
+        url,
+        is_conn,
+        port,
+        email,
+        tel,
+        creation_time,
+        expire_time,
+        company,
+        last_update_time,
+        file_name,
+        ip,
+        web_phone,
+        qq,
+        wx,
+        address,
+        title
         ) values (
-            #{url},
-            #{isConn},
-            #{port},
-            #{email},
-            #{tel},
-            #{creationTime},
-            #{expireTime},
-            #{company},
-            #{lastUpdateTime},
-            #{fileName},
-            #{ip},
-            #{webPhone},
-            #{qq},
-            #{wx},
-            #{address},
-            #{title}
+        #{url},
+        #{isConn},
+        #{port},
+        #{email},
+        #{tel},
+        #{creationTime},
+        #{expireTime},
+        #{company},
+        #{lastUpdateTime},
+        #{fileName},
+        #{ip},
+        #{webPhone},
+        #{qq},
+        #{wx},
+        #{address},
+        #{title}
         )
     </insert>
 
     <insert id="addListInfo" parameterType="java.util.List" useGeneratedKeys="true">
         insert into info (
-            url,
-            is_conn,
-            port,
-            email,
-            tel,
-            creation_time,
-            expire_time,
-            company,
-            last_update_time,
-            file_name,
-            ip,
-            web_phone,
-            qq,
-            wx,
-            address,
-            title,
-            rule,
-            rule_count,
-            is_whois
+        url,
+        is_conn,
+        port,
+        email,
+        tel,
+        creation_time,
+        expire_time,
+        company,
+        last_update_time,
+        file_name,
+        ip,
+        web_phone,
+        qq,
+        wx,
+        address,
+        title,
+        rule,
+        rule_count,
+        is_whois
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -86,17 +86,17 @@
         </foreach>
     </insert>
 
-    <select id="listRuleInfo" resultType="info" >
-       select  url,id from info where rule is  null   limit 100;
+    <select id="listRuleInfo" resultType="info">
+        select url,id from info where rule is null limit 100;
     </select>
     <update id="updateRuleInfo" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update info
-            <set >
-                <if test="item.rule != null " >
+            <set>
+                <if test="item.rule != null ">
                     rule = #{item.rule,jdbcType=VARCHAR},
                 </if>
-                <if test="item.ruleCount != null" >
+                <if test="item.ruleCount != null">
                     rule_count = #{item.ruleCount,jdbcType=INTEGER},
                 </if>
             </set>

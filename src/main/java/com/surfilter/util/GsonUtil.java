@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class GsonUtil {
     public static String getJsonStringByObject(Set<String> domainSet) {
-        return new Gson().toJson(domainSet);
+        return new Gson().toJson( domainSet );
 
     }
 }
