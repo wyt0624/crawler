@@ -103,4 +103,11 @@
             where id = #{item.id,jdbcType=BIGINT}
         </foreach>
     </update>
+
+    <select id="listInfo" resultType="info">
+        select  id,url,is_conn,port,email,tel,creation_time,expire_time,ip,last_update_time,web_phone,qq,title,category from info
+        <where>
+          is_conn =1   and category = 1
+        </where>
+    </select>
 </mapper>

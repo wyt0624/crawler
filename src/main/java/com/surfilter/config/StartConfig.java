@@ -59,7 +59,7 @@ public class StartConfig {
         //配置文件路径。如果没有目录则创建文件目录。
         initFile();
         //加载白名单。
-        initWhite();
+     //   initWhite();
         initCrawling();//初始化爬虫消费则。
     }
 //    private void initNum() {

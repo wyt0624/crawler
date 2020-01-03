@@ -333,9 +333,13 @@ public class StringUtil {
         double num = 0;
         String[] digit = url.split( "\\." );
         for (String str : digit) {
-            double nule = new BigDecimal( (float) str.length() / url.length() ).setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
-            if (num < nule) {
-                num = nule;
+            try {
+                double nule = new BigDecimal( (float) str.length() / url.length() ).setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
+                if (num < nule) {
+                    num = nule;
+                }
+            } catch ( Exception e ) {
+                e.printStackTrace();
             }
         }
         return num;

@@ -3,17 +3,22 @@ package com.surfilter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.surfilter.config.RedisKeyInfo;
 import com.surfilter.dao.CountryMapper;
 import com.surfilter.dao.IpMapper;
 import com.surfilter.dao.WhiteUrlMapper;
 import com.surfilter.entity.CountryInfo;
+import com.surfilter.entity.Phishing;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +34,84 @@ class CrawlerUtilApplicationTests {
     WhiteUrlMapper whiteUrlMapper;
     @Autowired
     CountryMapper countryMapper;
+    @Autowired
+    RedisKeyInfo redisKeyInfo;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
+    @Test
+    void tes1t(){
+        //钓鱼网站黑名单。
+       List<String> list =  FileUtil.ReadFileList1( "G:\\aaa.txt" );
+       int count = 0 ;
+       List<Phishing> listphishing = new ArrayList<>(  );
+       List<String> domains = new ArrayList<>(  );
+       for (String str :list) {
+           count ++;
+           if (!StringUtils.isNotBlank(str)) {
+               continue;
+           }
+           String domain = getHost(str);
+
+           if (!StringUtils.isNotBlank(domain)) {
+              continue;
+           }
+           if (stringRedisTemplate.opsForSet().isMember( redisKeyInfo.getPhishingUrl(),domain )) {
+               continue;
+           }
+           Phishing ph = new Phishing();
+           if (str.length()>4000) {
+               str = str.substring( 0,4000 );
+           }
+           ph.setUrl( str );
+           if (domain.length()>=4000) {
+               domain = str.substring( 0,4000 );
+           }
+           ph.setDomain( domain );
+           listphishing.add( ph );
+           domains.add( domain );
+           if (listphishing.size() > 1000) {
+               try {
+                   whiteUrlMapper.addPhishing( listphishing );
+                   String[] strings = new String[domains.size()];
+                   domains.toArray( strings );
+                   stringRedisTemplate.opsForSet().add( redisKeyInfo.getPhishingUrl(), strings );
+                   listphishing.clear();
+                   domains.clear();
+               } catch (Exception e) {
+                    e.printStackTrace();
+               }
+               count = 0;
+           }
+       }
+       try {
+            whiteUrlMapper.addPhishing( listphishing );
+            String[] strings = new String[domains.size()];
+            domains.toArray( strings );
+            stringRedisTemplate.opsForSet().add( redisKeyInfo.getPhishingUrl(), strings );
+            listphishing.clear();
+            domains.clear();
+       } catch (Exception e) {
+            e.printStackTrace();
+       }
+
+    }
+
+
+    /** 获得网站主机部分 */
+    private static String getHost(String urlStr) {
+        try {
+            String host = new URL(urlStr).getHost();
+            if (host.startsWith( "www." ) ){
+                host = host.substring( 4,host.length() );
+            }
+
+            return host;
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
 
     @Test
     void incountryInfoCaptal() {

@@ -16,7 +16,7 @@ spring:
         max-wait: 20ms
     timeout: 5000ms
     host: 172.30.154.203
-    port: 6361
+    port: 6377
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -41,6 +41,11 @@ spring:
     content-type: text/html; charset=utf-8
     template-loader-path=classpath: /templates/**
     request-context-attribute: dn
+    cache: true
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
   mvc:
     static-path-pattern: /static/**
 
@@ -59,6 +64,14 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true #启用驼峰是命名。
   type-aliases-package: com.surfilter.entity
+# 插件配置 pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
 
 #启动SeimiCrawler
 #seimi:
@@ -74,12 +87,13 @@ base:
     sysSole: web    #nomal 正常爬虫程序。   nmap   nmap 程序。  whois模式  web模式
 redis-info:
   key:
-    whileUrl: domain_whilt_url
-    domainUrl: domain_url
+    whileUrl: domain_whilt_url # 网站白名单。
+    domainUrl: domain_url #
     crawlerQueue: crawler_queue
     analiseQueue: analise_queue
     fidelityIp: fidelity_ip
     crawlerCache: crawler_cache
+    PhishingUrl: phishing_url #钓鱼 网站黑名单
 
 job:
   param:
@@ -90,4 +104,6 @@ job:
     nmapJob: 0 0/10 * * * ?
     whoisJob: 0/30 * * * * ?
 
-
+logging:
+  level:
+    com.surfilter.dao: debug

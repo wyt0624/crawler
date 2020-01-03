@@ -14,4 +14,5 @@ public class RedisKeyInfo {
     private String analiseQueue;
     private String fidelityIp;
     private String crawlerCache;
+    private String PhishingUrl;
 }

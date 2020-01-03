@@ -1,0 +1,27 @@
+body {
+    width: 98%;
+    margin: 0 auto;
+}
+/* 导航 */
+.dnsnav {
+    position: fixed !important;
+    top: 0;
+    z-index: 1;
+}
+.dnsmap {
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+    margin:0;
+    font-family:"微软雅黑";
+    top:44px;
+}
+.info div{
+    float: left;
+    width: 50%;
+}
+.domianinfo{
+    top: 670px;
+    position: absolute;
+    width: 98%;
+}

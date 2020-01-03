@@ -27,4 +27,18 @@
         </foreach>
     </insert>
 
+    <insert id="addPhishing" parameterType="java.util.List" useGeneratedKeys="true">
+        insert into phishing_url (
+        url,
+        domain
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.url},
+            #{item.domain}
+            )
+        </foreach>
+    </insert>
+
+
 </mapper>

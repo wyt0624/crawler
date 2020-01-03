@@ -12,4 +12,6 @@ public interface InfoMapper {
     List<Info> listRuleInfo();
 
     void updateRuleInfo(List<Info> list);
+
+    List<Info> listInfo();
 }
