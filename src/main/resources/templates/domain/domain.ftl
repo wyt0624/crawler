@@ -7,12 +7,11 @@
         </ol>
     </nav>
     <div id="domain">
-        <table class="table table-hover table-striped" id="example" >
+        <table class="table table-hover table-striped" id="domiantable" >
             <thead>
             <tr>
-                <th>id</th>
                 <th>域名</th>
-                <th>违法内容</th>
+                <th>标签</th>
                 <th>标题</th>
                 <th>发现时间</th>
                 <th>IP地址</th>
@@ -27,6 +26,6 @@
         </table>
 
     </div>
-    <script src="${dn.contextPath}/static/js/domain/domain.js"></script>
+
 </div>
 

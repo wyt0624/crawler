@@ -241,13 +241,13 @@ public class StringUtil {
             String[] ips = ip.split( "\\." );
             for (int i = 0; i < ips.length; i++) {
                 if (i == 0) {
-                    ipnum += Long.parseLong( ips[0] ) * 255 * 255 * 255;
+                    ipnum += Long.parseLong( ips[0] ) * 256 * 256 * 256;
                 }
                 if (i == 1) {
-                    ipnum += Long.parseLong( ips[1] ) * 255 * 255;
+                    ipnum += Long.parseLong( ips[1] ) * 256 * 256;
                 }
                 if (i == 2) {
-                    ipnum += Long.parseLong( ips[2] ) * 255;
+                    ipnum += Long.parseLong( ips[2] ) * 256;
                 }
                 if (i == 3) {
                     ipnum += Long.parseLong( ips[3] );
@@ -258,7 +258,6 @@ public class StringUtil {
         }
         return ipnum;
     }
-
 
     public static void getChangeCan(String aa, Object... var2) {
         System.out.println( var2 );
@@ -552,13 +551,39 @@ public class StringUtil {
     }
 
     public static void main(String[] args) {
-//        String str=  "80/tcp    open  http 443/tcp   open  https 8888/tcp  open  sun-answerbook 49152/tcp open   49153/tcp open   49154/tcp open   49155/tcp open   49156/tcp open   49157/tcp open";
-//        //RemoveSymbolaaa(str);
+        System.out.println(getIpNum( "123.144.0.255" ));
+//        int count = 12;int week =6;
+//        int tap = 0;
+//        int num = 0;
+//        for (int i= 1; i <= count;i++ ) {
+//            System.out.println("第"+i+"周：");
+//            for (int j = 0;j <= week; j++) {
+//                num ++;
+//                int mod = num%2;
 //
-//
-////        System.out.println(str.length());
-////        System.out.println(str);
-////        HttpUtil.getDocByUrl("http://www.chilangedu.com");
-        domainExClean( "nsg-dcloud.pingan.com.cn", new Info() );
+//                if(j == 0 ) {
+//                    if (tap == 0) {
+//                        System.out.println( "第"+i+"周*****左*****" + (mod==0?"":"打绒促") );
+//                        tap = 1;
+//                    }
+//                    else {
+//                        System.out.println( "第"+i+"周*****右*****"+ (mod==0?"":"打绒促") );
+//                        tap = 0;
+//                    }
+//                } else {
+//                    if (tap == 0) {
+//                        System.out.println( "第"+i+"周：第" + j + "天：左*****"+ (mod==0?"":"打绒促") );
+//                        tap = 1;
+//                    }
+//                    else {
+//                        System.out.println( "第"+i+"周：第" + j + "天：右*****" + (mod==0?"":"打绒促"));
+//                        tap = 0;
+//                    }
+//                }
+//            }
+//        }
+
+
+
     }
 }

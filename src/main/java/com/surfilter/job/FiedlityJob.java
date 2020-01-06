@@ -47,7 +47,6 @@ public class FiedlityJob {
                 }
                 stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp(), tuples );
                 tuples.clear();
-                tuples = null;
             }
             if (list.size() < 10000) {
                 count += list.size();

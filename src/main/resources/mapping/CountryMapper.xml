@@ -36,6 +36,7 @@
     <insert id="insertCountryInfo" parameterType="java.util.Map">
         insert country_info(country_cn,capital) values (#{key},#{value})
     </insert>
-
-
+    <select id="listCountryInfo" resultType="CountryInfo">
+        select country_cn,province,lng_x,lng_y from country_info limit 500;
+    </select>
 </mapper>

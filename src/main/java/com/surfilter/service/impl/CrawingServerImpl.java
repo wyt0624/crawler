@@ -6,6 +6,7 @@ import com.surfilter.config.RedisKeyInfo;
 import com.surfilter.config.StartConfig;
 import com.surfilter.dao.InfoMapper;
 import com.surfilter.entity.AnaliseInfo;
+import com.surfilter.entity.CountryInfo;
 import com.surfilter.entity.Info;
 import com.surfilter.enums.Param;
 import com.surfilter.service.ICrawingService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("ALL")
 @Service
@@ -74,7 +76,6 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                 }
                 try {
                     Info info = new Info();
-
                     StringUtil.domainExClean( url, info );
                     // 域名规则大约等于5的才可以进入
                     if (info.getRuleCount() >= 5) {
@@ -130,13 +131,38 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                             String ip = IpUtil.getIpByDomain( url );
                             if (StringUtils.isNotBlank( ip )) {
                                 info.setIp( ip );
-                                //                            Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
-                                //                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
-                                //                            for (String address : adds) {
-                                //                                info.setAddress( address );
-                                //                                break;
-                                //                            }
-                                //adds.clear();
+                                String address = "";
+                                Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(), StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
+                                for (String addr : adds) {
+                                    address = addr;
+                                    break;
+                                }
+                                adds.clear();
+                                if (StringUtils.isNotBlank( address )) {
+                                    for (CountryInfo cif : StartConfig.list) {
+                                        if (StringUtils.isNotBlank( cif.getProvince() ) && address.contains( cif.getProvince() )) {
+                                            info.setAddress( cif.getCountryCn() );
+                                            info.setLngX( cif.getLngX() );
+                                            info.setLngY( cif.getLngY() );
+                                            info.setAddress( cif.getProvince() );
+                                            break;
+                                        }
+                                        if (StringUtils.isNotBlank( cif.getCountryCn()  ) && address.contains( cif.getCountryCn() )) {
+                                            info.setAddress( cif.getCountryCn() );
+                                            info.setLngX( cif.getLngX() );
+                                            info.setLngY( cif.getLngY() );
+                                            info.setAddress( cif.getCountryCn() );
+                                            break;
+                                        }
+                                    }
+                                }
+                                //                          }
+                                //adds.clear();  Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
+                                //                                //                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
+                                //                                //                            for (String address : adds) {
+                                //                                //                                info.setAddress( address );
+                                //                                //                                break;
+                                //                                //
                             }
                             //                        WhoisModel wm = WhoisUtil.queryWhois( url );
                             //                        if (wm != null) {

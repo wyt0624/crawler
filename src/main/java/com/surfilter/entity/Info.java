@@ -29,4 +29,7 @@ public class Info {
     private int isPort;// 是否已经爬取nmap短偶库了。
     private String rule; //域名符合规则。
     private int ruleCount;//域名符合规则数量
+    private String lngX;//x经纬度
+    private String lngY;//y经纬度
+    private int num;//统计数量
 }

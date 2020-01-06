@@ -14,4 +14,9 @@ public interface CountryMapper {
     void updateCountryCaptical(Map<String, String> map);
 
     void insertCountryInfo(Map<String, String> map);
+
+    List<CountryInfo> listCountryInfo();
+
+
+
 }

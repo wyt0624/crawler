@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.surfilter.dao.IpMapper">
     <select id="ListIps" parameterType="int" resultType="ip" fetchSize="10000">
-        select * from ip limit #{count},10000
+        select * from ip order by end_ip_num asc limit #{count},10000
     </select>
     <insert id="addListIps" parameterType="java.util.List">
         insert into ip (

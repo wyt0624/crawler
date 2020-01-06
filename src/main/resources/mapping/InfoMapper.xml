@@ -59,7 +59,10 @@
         title,
         rule,
         rule_count,
-        is_whois
+        is_whois,
+        lng_x,
+        lng_y,
+        is_add
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -81,7 +84,10 @@
             #{item.title},
             #{item.rule},
             #{item.ruleCount},
-            #{item.isWhois}
+            #{item.isWhois},
+            #{item.lngX},
+            #{item.lngY},
+            2
             )
         </foreach>
     </insert>
@@ -104,10 +110,64 @@
         </foreach>
     </update>
 
-    <select id="listInfo" resultType="info">
-        select  id,url,is_conn,port,email,tel,creation_time,expire_time,ip,last_update_time,web_phone,qq,title,category from info
+    <select id="listInfo" parameterType="java.util.Map" resultType="info">
+        select  id,url,is_conn,port,email,tel,creation_time,expire_time,ip,last_update_time,web_phone,qq,title,category,address from info
         <where>
-          is_conn =1   and category = 1
+          is_conn =1
+          <if test="catagoryType != 0 and catagoryType != null">
+              and category = #{catagoryType}
+          </if>
+          <if test="catagoryType == 0 or catagoryType == null ">
+              and category in (1,2)
+          </if>
+          <if test="content != null and content != ''">
+             and (address = '${content}'
+             or title like '%${content}%'
+             or url like '%${content}%'
+          )
+          </if>
         </where>
+    </select>
+
+    <select id="listInfo1" resultType="info">
+        select  id,ip from info where  is_conn = 1 and is_add=1 and ip is not null limit 1000
+    </select>
+    <update id="updateInfo" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update info
+            <set>
+                address = #{item.address,jdbcType=VARCHAR},
+                lng_x = #{item.lngX,jdbcType=VARCHAR},
+                lng_y = #{item.lngY,jdbcType=VARCHAR},
+                is_add= 2
+            </set>
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <select id="listInfoCount" parameterType="java.util.Map" resultType="info">
+        SELECT
+            address,
+            lng_x,
+            lng_y,
+            count(1) AS num
+        FROM
+            info
+        <where>
+             is_conn = 1
+          <if test="catagoryType!=null ">
+            and category = #{catagoryType}
+          </if>
+          <if test="catagoryType==null">
+            AND category IN (1, 2)
+          </if>
+          AND address IS NOT NULL
+          AND lng_x IS NOT NULL
+          AND lng_y IS NOT NULL
+        </where>
+        GROUP BY
+            address,
+            lng_x,
+            lng_y
     </select>
 </mapper>

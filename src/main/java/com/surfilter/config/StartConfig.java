@@ -2,6 +2,8 @@ package com.surfilter.config;
 
 import com.surfilter.consumer.RedisReceiver;
 import com.surfilter.content.Globle;
+import com.surfilter.dao.CountryMapper;
+import com.surfilter.entity.CountryInfo;
 import com.surfilter.entity.WhiteUrl;
 import com.surfilter.service.IIpService;
 import com.surfilter.service.IWhiteListService;
@@ -39,8 +41,11 @@ public class StartConfig {
     @Autowired
     IIpService ipService;
     @Autowired
+    CountryMapper countryMapper;
+    @Autowired
     RedisReceiver redisReceiver;
-    //    @Autowired
+    public   static     List<CountryInfo>  list;
+//    @Autowired
 //    InfoMapper infoMapper;
     private static boolean isOSLinux;
 
@@ -60,6 +65,8 @@ public class StartConfig {
         initFile();
         //加载白名单。
      //   initWhite();
+        list = countryMapper.listCountryInfo();
+
         initCrawling();//初始化爬虫消费则。
     }
 //    private void initNum() {
@@ -76,33 +83,6 @@ public class StartConfig {
 //            infoMapper.updateRuleInfo(list);
 //            count += list.size();
 //            log.info( "执行规则更新{}条" ,count );
-//        }
-//    }
-
-//    private void initIp() {
-//        log.info( "开始加载村真ip到redis" );
-//        int count = 0;
-//        for (;;) {
-//            List<Ip> list = ipService.listIps(count);
-//            if (list.size()> 0){
-//                Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
-//                for (Ip ip:list){
-//                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>(ip.getAddress() +
-//                            "_" + ip.getSpecificAddress(), (double)ip.getEndIpNum());
-//                    tuples.add( tuple );
-//                }
-//                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp() ,tuples);
-//                tuples.clear();
-//                tuples = null;
-//            }
-//            if (list.size()< 10000) {
-//                count += list.size();
-//                log.info( "存真ip入库成功，总条数：{}",count);
-//                break;
-//            } else {
-//                log.info( "存真ip入库成功入缓存，数量：{}",count);
-//                count += 10000;
-//            }
 //        }
 //    }
 
