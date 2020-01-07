@@ -68,7 +68,7 @@ public class HttpUtil {
             socket.connect( socketAddress, timeout );
             isAlive = true;
         } catch (Exception exception) {
-            exception.printStackTrace();
+           // exception.printStackTrace();
         } finally {
             try {
                 socket.close();
@@ -140,7 +140,7 @@ public class HttpUtil {
                     .ignoreContentType( true )
                     .timeout( timeout ).get();
         } catch (Exception e) {
-            e.printStackTrace();
+        //    e.printStackTrace();
         }
         return doc;
     }

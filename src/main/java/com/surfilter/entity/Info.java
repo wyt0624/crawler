@@ -2,6 +2,7 @@ package com.surfilter.entity;
 
 import lombok.Data;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -32,4 +33,6 @@ public class Info {
     private String lngX;//x经纬度
     private String lngY;//y经纬度
     private int num;//统计数量
+    private String httpProtocol;
+    private Date createTime;
 }

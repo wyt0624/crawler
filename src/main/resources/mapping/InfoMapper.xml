@@ -62,7 +62,8 @@
         is_whois,
         lng_x,
         lng_y,
-        is_add
+        is_add,
+        http_protocol
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -87,7 +88,8 @@
             #{item.isWhois},
             #{item.lngX},
             #{item.lngY},
-            2
+            2,
+            #{item.httpProtocol}
             )
         </foreach>
     </insert>
@@ -111,7 +113,7 @@
     </update>
 
     <select id="listInfo" parameterType="java.util.Map" resultType="info">
-        select  id,url,is_conn,port,email,tel,creation_time,expire_time,ip,last_update_time,web_phone,qq,title,category,address from info
+        select  id,url,is_conn,port,email,tel,create_time,expire_time,ip,last_update_time,web_phone,qq,title,category,address from info
         <where>
           is_conn =1
           <if test="catagoryType != 0 and catagoryType != null">
@@ -122,8 +124,6 @@
           </if>
           <if test="content != null and content != ''">
              and (address = '${content}'
-             or title like '%${content}%'
-             or url like '%${content}%'
           )
           </if>
         </where>
@@ -155,11 +155,13 @@
             info
         <where>
              is_conn = 1
-          <if test="catagoryType!=null ">
-            and category = #{catagoryType}
-          </if>
-          <if test="catagoryType==null">
-            AND category IN (1, 2)
+          <if test="catagoryType!=null">
+              <if test="catagoryType!=0">
+                  and category = #{catagoryType}
+              </if>
+              <if test="catagoryType==0">
+                  AND category IN (1, 2)
+              </if>
           </if>
           AND address IS NOT NULL
           AND lng_x IS NOT NULL

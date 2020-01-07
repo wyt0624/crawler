@@ -54,11 +54,11 @@ $('#domiantable')
                 }
             } ,"width": "10%"},
         { data: function(obj){
-            if(obj.creationTime == null) {
+            if(obj.createTime == null) {
                 return "";
             }
             else {
-                var  time = obj.creationTime.split("T").join(" ")
+                var  time = obj.createTime.split("T").join(" ")
                 return time.substr(0,19);
             }
         } ,"width": "8%","orderable":false},

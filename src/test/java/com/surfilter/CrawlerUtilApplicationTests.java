@@ -117,14 +117,12 @@ class CrawlerUtilApplicationTests {
                 if (StringUtils.isNotBlank( add )) {
                     for (CountryInfo cif : list) {
                         if (StringUtils.isNotBlank( cif.getProvince() ) && add.contains( cif.getProvince() )) {
-                            info.setAddress( cif.getCountryCn() );
                             info.setLngX( cif.getLngX() );
                             info.setLngY( cif.getLngY() );
                             info.setAddress( cif.getProvince() );
                             break;
                         }
                         if (StringUtils.isNotBlank( cif.getCountryCn()  ) && add.contains( cif.getCountryCn() )) {
-                            info.setAddress( cif.getCountryCn() );
                             info.setLngX( cif.getLngX() );
                             info.setLngY( cif.getLngY() );
                             info.setAddress( cif.getCountryCn() );

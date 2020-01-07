@@ -7,10 +7,10 @@ import com.surfilter.entity.Info;
 import com.surfilter.service.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,31 +21,28 @@ public class indexController {
     @Autowired
     InfoService infoService;
 
-    @RequestMapping("/index")
-    public ModelAndView index1(@RequestParam(value="category",required=false) Integer catagoryType) {
-        ModelAndView mv = new ModelAndView( "/index" );
+    @RequestMapping("index")
+    public String index1(@RequestParam(value="category",required=false) Integer catagoryType, ModelMap mv) {
         List<Info> list = null;
+        if (catagoryType == null){
+            catagoryType= 0;
+        }
         try {
             list = infoService.listInfoCount(catagoryType);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (catagoryType == null){
-            mv.addObject( "catagoryType",0 );
-        } else {
-            mv.addObject( "catagoryType",catagoryType );
-        }
-
-        mv.addObject( "list" ,list );
-        return mv;
+        mv.put( "catagoryType",catagoryType );
+        mv.put( "list" ,list );
+        return "/main/main";
     }
     @RequestMapping("/info")
     public @ResponseBody
     Map<String,Object> lists(Columns columns,int catagoryType) {
         Map<String,Object> map = new HashMap<>(  );
-        PageHelper.startPage(columns.getStart(),columns.getLength());
-        PageInfo<Info> pageInfo = new PageInfo<Info>(infoService.listInfo(columns,catagoryType));
-       // return pageInfo;
+        PageHelper.startPage(columns.getDraw(),columns.getLength());
+        List<Info> listinfo = infoService.listInfo(columns,catagoryType);
+        PageInfo<Info> pageInfo = new PageInfo<Info>(listinfo);
         map.put( "data",pageInfo.getList() );
         map.put( "recordsTotal", pageInfo.getTotal() );
         map.put( "recordsFiltered",pageInfo.getTotal() );

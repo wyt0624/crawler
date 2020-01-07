@@ -86,6 +86,7 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                         try {
                             String newUrl = null;
                             String HTTP = "";
+                            String httpProtocol ="";//htt协议
                             if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTPS_PORT.getCode() )) {
                                 HTTP = Param.HTTPS_PORT.getMsg() + "://";
                             } else if (HttpUtil.isSocketAliveUitlitybyCrunchify( url, Param.HTTP_PORT.getCode() )) {
@@ -93,24 +94,24 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                             } else {
                                 HTTP = Param.HTTPS_PORT.getMsg() + "://";
                             }
-
-
                             try {
                                 newUrl = HTTP + url;
+                                httpProtocol = HTTP;
                                 doc = HttpUtil.getDocByUrl( newUrl, 10000 );
                             } catch (Exception e) {
                                 newUrl = HTTP + "www." + url;
-                                e.printStackTrace();
+                                httpProtocol = HTTP+"www.";
+                                log.info( "newUrl:{} 连接失败",newUrl );
+                                try {
+                                    doc = HttpUtil.getDocByUrl( newUrl, 10000 );
+                                } catch (Exception e1) {
+                                    log.info( "newUrl:{} 连接失败",newUrl );
+                                    throw new Exception();
+                                }
                             }
-                            //url已经判断是带www.的域名了 不需要在爬
-                            if (url.startsWith( "www." )) {
-                                throw new Exception();
-                            } else {
-                                doc = HttpUtil.getDocByUrl( newUrl, 10000 );
-                                html = doc.html();
-                            }
-
-                            if (doc.select( "iframe" ).hasAttr( "src" )) { //如果html中包含ifream 标签
+                            info.setHttpProtocol( httpProtocol );
+                            html = doc.html();
+                           if (doc.select( "iframe" ).hasAttr( "src" )) { //如果html中包含ifream 标签
                                 String ifreamUrl = doc.select( "iframe" ).first().attr( "src" );
                                 if (!(ifreamUrl.contains( "https://" ) || ifreamUrl.contains( "http://" ))) {
                                     if (ifreamUrl.startsWith( "/" )) {
@@ -123,9 +124,11 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                                     doc = HttpUtil.getDocByUrl( ifreamUrl, 10000 );
                                     html += doc.html();
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    log.info( "newUrl:{} 连接失败",ifreamUrl );
+                                    //e.printStackTrace();
                                 }
                             }
+                            info.setHttpProtocol( httpProtocol );
                             title = doc.title();
                             info.setIsConn( 1 );//可以访问。
                             String ip = IpUtil.getIpByDomain( url );
@@ -137,18 +140,16 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                                     address = addr;
                                     break;
                                 }
-                                adds.clear();
+
                                 if (StringUtils.isNotBlank( address )) {
                                     for (CountryInfo cif : StartConfig.list) {
                                         if (StringUtils.isNotBlank( cif.getProvince() ) && address.contains( cif.getProvince() )) {
-                                            info.setAddress( cif.getCountryCn() );
                                             info.setLngX( cif.getLngX() );
                                             info.setLngY( cif.getLngY() );
                                             info.setAddress( cif.getProvince() );
                                             break;
                                         }
                                         if (StringUtils.isNotBlank( cif.getCountryCn()  ) && address.contains( cif.getCountryCn() )) {
-                                            info.setAddress( cif.getCountryCn() );
                                             info.setLngX( cif.getLngX() );
                                             info.setLngY( cif.getLngY() );
                                             info.setAddress( cif.getCountryCn() );
@@ -156,6 +157,7 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                                         }
                                     }
                                 }
+                                adds.clear();
                                 //                          }
                                 //adds.clear();  Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),
                                 //                                //                                    StringUtil.getIpNum( ip ), Long.MAX_VALUE, 0, 1 );
@@ -209,7 +211,7 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                             //                        }
                             //                        wm = null;
                         } catch (Exception e1) {
-                            e1.printStackTrace();
+//                            e1.printStackTrace();
                             info.setIsConn( 2 );
                         }
                         info.setUrl( url );
@@ -231,7 +233,7 @@ public class CrawingServerImpl implements ICrawingService, Runnable {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                 }
             }
             if (listInfo.size() > 0) {
                 try {
