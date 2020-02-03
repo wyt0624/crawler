@@ -1,5 +1,6 @@
 package com.surfilter.config;
 
+import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.surfilter.consumer.RedisReceiver;
 import com.surfilter.content.Globle;
 import com.surfilter.dao.CountryMapper;
@@ -54,6 +55,7 @@ public class StartConfig {
         if (!baseInfo.getSysSole().equals( Globle.SYS_ROLE_NOMAL )) {
             return;
         }
+        JiebaSegmenter segmenter = new JiebaSegmenter();
         isOSLinux();
         try {
             SslUtils.ignoreSsl();//忽略所有证书。

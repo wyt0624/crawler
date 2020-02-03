@@ -38,6 +38,20 @@ public class StringUtil {
         return new String( sb );
     }
 
+    /**
+     * 判断字符串是数字
+     * @param str
+     * @return
+     */
+    public static boolean isNumericzidai(String str) {
+        Pattern pattern = Pattern.compile("-?[0-9]+.?[0-9]+");
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
+
     public static String RemoveSymbolNumStr(String str) throws Exception {
         String regEx = "[a-zA-Z0-9]";
         Pattern p = Pattern.compile( regEx );
@@ -551,56 +565,9 @@ public class StringUtil {
     }
 
     public static void main(String[] args) throws Exception {
-
-
-
-        try {
-            int c= 1/1;
-        } catch (Exception e) {
-            try {
-                int c= 1/1;
-            } catch (Exception e1) {
-                throw new Exception();
-            }
-
-        }
-        System.out.println(1);
-
-
-
-
-//        System.out.println(getIpNum( "123.144.0.255" ));
-//        int count = 12;int week =6;
-//        int tap = 0;
-//        int num = 0;
-//        for (int i= 1; i <= count;i++ ) {
-//            System.out.println("第"+i+"周：");
-//            for (int j = 0;j <= week; j++) {
-//                num ++;
-//                int mod = num%2;
-//
-//                if(j == 0 ) {
-//                    if (tap == 0) {
-//                        System.out.println( "第"+i+"周*****左*****" + (mod==0?"":"打绒促") );
-//                        tap = 1;
-//                    }
-//                    else {
-//                        System.out.println( "第"+i+"周*****右*****"+ (mod==0?"":"打绒促") );
-//                        tap = 0;
-//                    }
-//                } else {
-//                    if (tap == 0) {
-//                        System.out.println( "第"+i+"周：第" + j + "天：左*****"+ (mod==0?"":"打绒促") );
-//                        tap = 1;
-//                    }
-//                    else {
-//                        System.out.println( "第"+i+"周：第" + j + "天：右*****" + (mod==0?"":"打绒促"));
-//                        tap = 0;
-//                    }
-//                }
-//            }
-//        }
-
+//        System.out.println("test tt,百度 哈哈");
+        boolean bb = isNumericzidai("232i23232");
+        System.out.println(bb);
 
 
     }

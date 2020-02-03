@@ -130,7 +130,7 @@
     </select>
 
     <select id="listInfo1" resultType="info">
-        select  id,ip from info where  is_conn = 1 and is_add=1 and ip is not null limit 1000
+        select  id,ip from info where  is_conn = 1 and is_add=1 and category in (1,2) and ip is not null limit 1000
     </select>
     <update id="updateInfo" parameterType="java.util.List" >
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">

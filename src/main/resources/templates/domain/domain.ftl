@@ -1,5 +1,5 @@
 
-<div class ="domianinfo">
+<div class="domianinfo" id="domianinfo">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">黑灰产</li>
@@ -7,7 +7,7 @@
         </ol>
     </nav>
     <div id="domain">
-        <table class="table table-hover table-striped" id="domiantable" >
+        <table class="table table-striped table-bordered dataTable no-footer" id="domiantable" >
             <thead>
             <tr>
                 <th>域名</th>

@@ -5,6 +5,7 @@ server:
     max-threads: 500
   servlet:
     context-path: /dns
+  max-http-header-size: 4048576
 spring:
   redis:
     #    cluster:

@@ -18,17 +18,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("ALL")
 @SpringBootTest
@@ -59,39 +58,39 @@ class CrawlerUtilApplicationTests {
 
 
 //
-        String ip = "123.140.238.53";
-        String gadd= "";
-        Long num = StringUtil.getIpNum( ip );
-        System.out.println(num);
-        Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),num , Long.MAX_VALUE, 0, 1 );
-        for (String address : adds) {
-            gadd = address;
-            break;
+//        String ip = "123.140.238.53";
+////        String gadd= "";
+////        Long num = StringUtil.getIpNum( ip );
+////        System.out.println(num);
+////        Set<String> adds = stringRedisTemplate.opsForZSet().rangeByScore( redisKeyInfo.getFidelityIp(),num , Long.MAX_VALUE, 0, 1 );
+////        for (String address : adds) {
+////            gadd = address;
+////            break;
+////        }
+////        System.out.println(gadd);
+        int count = 0;
+        for (; ; ) {
+            List<Ip> list = ipService.listIps( count );
+            if (list.size() > 0) {
+                Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
+                for (Ip ip : list) {
+                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>( ip.getAddress() +
+                            "_" + ip.getSpecificAddress()+ "_" + ip.getStartIpNum() +"_"+ip.getEndIpNum() + "_"+ip.getId(), (double) (ip.getEndIpNum()));
+                    tuples.add( tuple );
+                }
+                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp(), tuples );
+                tuples.clear();
+                tuples = null;
+            }
+            if (list.size() < 10000) {
+                count += list.size();
+                log.info( "存真ip入库成功，总条数：{}", count );
+                break;
+            } else {
+                log.info( "存真ip入库成功入缓存，数量：{}", count );
+                count += 10000;
+            }
         }
-        System.out.println(gadd);
-//        int count = 0;
-//        for (; ; ) {
-//            List<Ip> list = ipService.listIps( count );
-//            if (list.size() > 0) {
-//                Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
-//                for (Ip ip : list) {
-//                    ZSetOperations.TypedTuple<String> tuple = new DefaultTypedTuple<String>( ip.getAddress() +
-//                            "_" + ip.getSpecificAddress()+ "_" + ip.getStartIpNum() +"_"+ip.getEndIpNum() + "_"+ip.getId(), (double) (ip.getEndIpNum()));
-//                    tuples.add( tuple );
-//                }
-//                stringRedisTemplate.opsForZSet().add( redisKeyInfo.getFidelityIp(), tuples );
-//                tuples.clear();
-//                tuples = null;
-//            }
-//            if (list.size() < 10000) {
-//                count += list.size();
-//                log.info( "存真ip入库成功，总条数：{}", count );
-//                break;
-//            } else {
-//                log.info( "存真ip入库成功入缓存，数量：{}", count );
-//                count += 10000;
-//            }
-//        }
 
     }
 
@@ -291,8 +290,8 @@ class CrawlerUtilApplicationTests {
     void contextLoads() throws Exception {
         InputStreamReader isr = null;
         BufferedReader br = null;
-        File file = new File("D:/ttt1.txt");
-        isr = new InputStreamReader(new FileInputStream(file), "utf-8");
+        File file = new File("D:/tt2.txt");
+        isr = new InputStreamReader(new FileInputStream(file), "GBK");
         br = new BufferedReader(isr);
         String str;
         // 按行读取字符串
@@ -301,6 +300,8 @@ class CrawlerUtilApplicationTests {
         List<Ip> lista  = new ArrayList<Ip>(  );
 
         while ((str = br.readLine()) != null) {// 使用readLine方法，一次读一行
+            str = new String(getUTF8BytesFromGBKString(str),"UTF-8");
+
             count ++;
             String start_ip = "";
             long strat_ip_num = 0;
@@ -382,4 +383,25 @@ class CrawlerUtilApplicationTests {
         lista.clear();
     }
 
+    public static byte[] getUTF8BytesFromGBKString(String gbkStr) {
+        int n = gbkStr.length();
+        byte[] utfBytes = new byte[3 * n];
+        int k = 0;
+        for (int i = 0; i < n; i++) {
+            int m = gbkStr.charAt(i);
+            if (m < 128 && m >= 0) {
+                utfBytes[k++] = (byte) m;
+                continue;
+            }
+            utfBytes[k++] = (byte) (0xe0 | (m >> 12));
+            utfBytes[k++] = (byte) (0x80 | ((m >> 6) & 0x3f));
+            utfBytes[k++] = (byte) (0x80 | (m & 0x3f));
+        }
+        if (k < utfBytes.length) {
+            byte[] tmp = new byte[k];
+            System.arraycopy(utfBytes, 0, tmp, 0, k);
+            return tmp;
+        }
+        return utfBytes;
+    }
 }

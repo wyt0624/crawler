@@ -39,6 +39,25 @@
             )
         </foreach>
     </insert>
+    <select id="listWhite"  parameterType="java.util.Map" resultType="whiteUrl">
+      select * from white_url
+      <where>
+          <if test="content != null and content != ''">
+              id like "%"#{content}"%"
+              or url  like "%"#{content}"%"
+              or name like "%"#{content}"%"
+          </if>
 
-
+      </where>
+    </select>
+    <select id="listBlack"  parameterType="java.util.Map" resultType="phishing">
+        select * from phishing_url
+        <where>
+            <if test="content != null and content != ''">
+                id like "%"#{content}"%"
+                or url  like "%"#{content}"%"
+                or domain like "%"#{content}"%"
+            </if>
+        </where>
+    </select>
 </mapper>

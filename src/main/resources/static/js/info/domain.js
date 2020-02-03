@@ -1,20 +1,27 @@
 $('#domiantable')
     .on( 'init.dt', function () {
-    $('.info-tip').on('click', function() {
+    $('.info-tip').on('mouseover', function() {
         layer.tips($(this).data().info, $(this), {
             tips: [1, '#3595CC'],
             time: 4000
         });
     });
+    $('.info-tip').on('click', function() {
+        window.open("//"+$(this).data().target);
+    });
 }).on( 'xhr.dt', function () {  //表格刷新后
     setTimeout(function () {
-        $('.info-tip').on('click', function() {
+        $('.info-tip').on('mouseover', function() {
             layer.tips($(this).data().info, $(this), {
                 tips: [1, '#3595CC'],
                 time: 4000
             });
         });
+        $('.info-tip').on('click', function() {
+            window.open("//"+$(this).data().target);
+        });
     });
+
 } ).dataTable( {
     searching:true,
     serverSide:true,
@@ -32,9 +39,9 @@ $('#domiantable')
                 }
                 if (obj.url.length > 30) {
                     //小tips
-                    return  '<a class="info-tip" data-info="' + obj.url + '">' + obj.url.substring(0,30)+ '...</a>';
+                    return  '<a class="info-tip" data-info="' + obj.url + '"  data-target="' + obj.url + '">' + obj.url.substring(0,30)+ '...</a>';
                 } else {
-                    return obj.url;
+                    return  '<a class="info-tip" data-info="' + obj.url + '" data-target="' + obj.url + '">' + obj.url+ '...</a>';
                 }
             } ,"width": "15%","orderable":false},
         { data: function (obj) {
@@ -48,9 +55,9 @@ $('#domiantable')
                     return "";
                 }
                 if (obj.title.length > 10) {
-                    return  '<a class="info-tip" data-info="' + obj.title + '">' + obj.title.substring(0,8) + '...</a>';
+                    return  '<a class="info-tip" data-info="' + obj.title + '"  data-target="' + obj.url + '">' + obj.title.substring(0,8) + '...</a>';
                 } else {
-                    return obj.title;
+                    return  '<a class="info-tip" data-info="' + obj.title + '"  data-target="' + obj.url + '">' + obj.title + '</a>';
                 }
             } ,"width": "10%"},
         { data: function(obj){
@@ -72,16 +79,16 @@ $('#domiantable')
                     return "";
                 }
                if (obj.port.length > 15) {
-                   return  '<a class="info-tip" data-info="' + obj.port + '">' + obj.port.substring(0,15) +'...</a>';
+                   return  '<a class="info-tip" data-info="' + obj.port + '"  data-target="' + obj.url + '">' + obj.port.substring(0,15) +'...</a>';
                } else {
-                   return obj.port;
+                   return  '<a class="info-tip" data-info="' + obj.port + '"  data-target="' + obj.url + '">' + obj.port +'</a>';
                }
             },"width": "10%","orderable":false},
         { data: "webPhone" ,"width": "8%","orderable":false}
     ],
 /*    scrollY: 400,*/
     language:{
-        sProcessing: '<img src="'+ basepath+'/static/images/loading.gif" style="width:400px">',
+        sProcessing: '<img src="'+ basepath+'/static/images/loading.gif" style="width:100px">',
         sLengthMenu: "显示 _MENU_ 项结果",
         sZeroRecords: "没有匹配结果",
         sInfo: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",

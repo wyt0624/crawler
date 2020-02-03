@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surfilter.dao.TemplateMapper">
+    <!--集合列表-->
+    <select id="listTemplate"  parameterType="java.util.Map" resultType="template">
+        select  *  from phishing_template
+        <where>
+            <if test="content != null and content != ''">
+                id like "%"#{content}"%"
+                or url  like "%"#{content}"%"
+                or name like "%"#{content}"%"
+                or keyword like "%"#{content}"%"
+            </if>
+        </where>
+    </select>
+    <!-- 修改模板数据-->
+    <update id="changeTemplate" parameterType="template">
+      update
+        phishing_template
+      set
+        url = #{url},
+        name = #{name},
+        title = #{title},
+        keyword = #{keyword},
+        domain = #{domain}
+      <where>
+          id = #{id}
+      </where>
+    </update>
+    <!--新建模板数据 -->
+    <insert id="addTemplate" parameterType="template">
+      insert into
+        phishing_template (url,name,title,keyword,domain)
+      values (#{url},#{name},#{title},#{keyword},#{domain});
+    </insert>
+
+    <!--验证url是否存在-->
+    <select id="checkUrl" parameterType="template" resultType="int">
+        select count(*) from phishing_template where url = #{url}
+    </select>
+
+    <!--删处模板-->
+    <delete id="delTemplate" parameterType="template">
+        delete from phishing_template where id = #{id}
+    </delete>
+</mapper>
